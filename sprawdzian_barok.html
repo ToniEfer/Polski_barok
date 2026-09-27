@@ -138,6 +138,7 @@
     <span>39 punktów</span>
     <span>10 zadań</span>
     <span>Język polski, klasa 1</span>
+    <span>kolejność losowana</span>
   </div>
 </header>
 
@@ -145,14 +146,7 @@
 <div class="task">
   <div class="task-header"><div class="task-title">Zadanie 1.</div><div class="task-points">3 punkty</div></div>
   <p class="task-instruction">Spośród poniższych zdań wybierz tylko te, które są <strong>prawdziwe</strong>. Kliknij zdanie, aby je zaznaczyć.</p>
-  <div id="z1">
-    <div class="stmt-row" onclick="toggleStmt(this)"><div class="checkbox-indicator"></div><div class="stmt-label">a)</div><div class="stmt-text">Nazwa epoki pochodzi prawdopodobnie od portugalskiego słowa <em>barocco</em>, oznaczającego perłę o nieregularnym kształcie.</div></div>
-    <div class="stmt-row" onclick="toggleStmt(this)"><div class="checkbox-indicator"></div><div class="stmt-label">b)</div><div class="stmt-text">Barokowy światopogląd nawiązuje przede wszystkim do renesansu i jego wiary w harmonię świata.</div></div>
-    <div class="stmt-row" onclick="toggleStmt(this)"><div class="checkbox-indicator"></div><div class="stmt-label">c)</div><div class="stmt-text">Mikołaj Sęp-Szarzyński jest uważany za prekursora baroku w literaturze polskiej.</div></div>
-    <div class="stmt-row" onclick="toggleStmt(this)"><div class="checkbox-indicator"></div><div class="stmt-label">d)</div><div class="stmt-text">Sonet składa się z czternastu wersów ułożonych w cztery strofy: 4 + 4 + 3 + 3.</div></div>
-    <div class="stmt-row" onclick="toggleStmt(this)"><div class="checkbox-indicator"></div><div class="stmt-label">e)</div><div class="stmt-text"><em>Pamiętniki</em> Jana Chryzostoma Paska zostały wydane jeszcze za życia autora i od razu przyniosły mu sławę.</div></div>
-    <div class="stmt-row" onclick="toggleStmt(this)"><div class="checkbox-indicator"></div><div class="stmt-label">f)</div><div class="stmt-text">Programem kontrreformacji były uchwały soboru watykańskiego.</div></div>
-  </div>
+  <div id="z1"></div>
   <button class="btn btn-check" onclick="checkZ1()">Sprawdź</button>
   <div class="feedback" id="fb1"></div>
 </div>
@@ -214,14 +208,7 @@
 <div class="task">
   <div class="task-header"><div class="task-title">Zadanie 7.</div><div class="task-points">1 punkt</div></div>
   <p class="task-instruction">Skreśl trzy cechy, które <strong>nie</strong> charakteryzują sztuki baroku. Kliknij pojęcie, żeby je skreślić.</p>
-  <div class="words-grid" id="z7words">
-    <div class="word-chip" onclick="toggleWord(this)" data-word="kontrast">kontrast i przeciwieństwo</div>
-    <div class="word-chip" onclick="toggleWord(this)" data-word="umiar">harmonia i umiar</div>
-    <div class="word-chip" onclick="toggleWord(this)" data-word="dynamizm">dynamizm i ruch</div>
-    <div class="word-chip" onclick="toggleWord(this)" data-word="prostota">prostota i oszczędność formy</div>
-    <div class="word-chip" onclick="toggleWord(this)" data-word="przepych">przepych i bogata dekoracja</div>
-    <div class="word-chip" onclick="toggleWord(this)" data-word="antropo">antropocentryzm</div>
-  </div>
+  <div class="words-grid" id="z7words"></div>
   <button class="btn btn-check" onclick="checkZ7()">Sprawdź</button>
   <div class="feedback" id="fb7"></div>
 </div>
@@ -292,9 +279,46 @@ function norm(s) {
     .replace(/[.,;:!?„”"']/g,'').replace(/\s+/g,' ');
 }
 
+// ===== NARZĘDZIA =====
+// Tasowanie (Fisher-Yates) — przy każdym otwarciu strony inna kolejność,
+// więc nie da się zaliczyć sprawdzianu, wybierając odpowiedzi „po przekątnej".
+function tasuj(a) {
+  const t = a.slice();
+  for (let i = t.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const p = t[i]; t[i] = t[j]; t[j] = p;
+  }
+  return t;
+}
+const LITERY = 'abcdefghij';
+
+function opcje(lista, placeholder) {
+  return `<option value="">${placeholder}</option>` +
+    tasuj(lista).map(o => `<option value="${o.v}">${o.t}</option>`).join('');
+}
+
 // ===== ZADANIE 1 =====
-const z1correct = [0, 2, 3]; // a, c, d
+const Z1 = [
+  { ok: true,  txt: 'Nazwa epoki pochodzi prawdopodobnie od portugalskiego słowa <em>barocco</em>, oznaczającego perłę o nieregularnym kształcie.' },
+  { ok: false, txt: 'Barokowy światopogląd nawiązuje przede wszystkim do renesansu i jego wiary w harmonię świata.',
+    wyj: 'barok nawiązuje do średniowiecza, nie do renesansu' },
+  { ok: true,  txt: 'Mikołaj Sęp-Szarzyński jest uważany za prekursora baroku w literaturze polskiej.' },
+  { ok: true,  txt: 'Sonet składa się z czternastu wersów ułożonych w cztery strofy: 4 + 4 + 3 + 3.' },
+  { ok: false, txt: '<em>Pamiętniki</em> Jana Chryzostoma Paska zostały wydane jeszcze za życia autora i od razu przyniosły mu sławę.',
+    wyj: 'wydano je dopiero w 1836 r., ponad sto lat po śmierci autora' },
+  { ok: false, txt: 'Programem kontrreformacji były uchwały soboru watykańskiego.',
+    wyj: 'chodzi o sobór trydencki (1545–1563)' }
+];
 let z1score = null;
+
+(function buildZ1() {
+  document.getElementById('z1').innerHTML = tasuj(Z1).map((it, i) => `
+    <div class="stmt-row" data-ok="${it.ok ? 1 : 0}" data-wyj="${it.wyj || ''}" onclick="toggleStmt(this)">
+      <div class="checkbox-indicator"></div>
+      <div class="stmt-label">${LITERY[i]})</div>
+      <div class="stmt-text">${it.txt}</div>
+    </div>`).join('');
+})();
 
 function toggleStmt(el) {
   if (el.dataset.locked) return;
@@ -306,11 +330,15 @@ function checkZ1() {
   if (z1score !== null) return;
   const rows = document.querySelectorAll('#z1 .stmt-row');
   let pts = 0, hasWrong = false;
+  const prawdziwe = [], falszywe = [];
   rows.forEach((row, i) => {
-    row.dataset.locked = '1'; row.onclick = null;
+    row.dataset.locked = '1';
+    row.onclick = null;
     const sel = row.classList.contains('selected');
-    const isTrue = z1correct.includes(i);
+    const isTrue = row.dataset.ok === '1';
     const ci = row.querySelector('.checkbox-indicator');
+    if (isTrue) prawdziwe.push(LITERY[i]);
+    else if (row.dataset.wyj) falszywe.push(LITERY[i] + ') ' + row.dataset.wyj);
     if (isTrue && sel) { row.classList.add('correct'); ci.textContent = '✓'; pts++; }
     else if (!isTrue && sel) { row.classList.add('wrong'); ci.textContent = '✗'; hasWrong = true; }
     else if (isTrue && !sel) { row.classList.add('missed'); ci.textContent = '!'; }
@@ -320,7 +348,7 @@ function checkZ1() {
   const fb = document.getElementById('fb1');
   fb.style.display = 'block';
   fb.className = 'feedback ' + (pts >= 2 ? 'ok' : 'nok');
-  fb.textContent = `Wynik: ${pts}/3 pkt. Prawdziwe: a, c, d. (b – barok nawiązuje do średniowiecza, nie do renesansu; e – Pamiętniki wydano dopiero w 1836 r., ponad sto lat po śmierci Paska; f – chodzi o sobór trydencki, nie watykański.)`;
+  fb.textContent = `Wynik: ${pts}/3 pkt. Prawdziwe zdania: ${prawdziwe.join(', ')}. (${falszywe.join('; ')}.)`;
 }
 
 // ===== ZADANIE 2 – twórcy =====
@@ -329,42 +357,46 @@ const Z2 = [
   { name: 'Daniel Naborowski',      hint: '1573–1640',     nurt: 'dworski',     utwor: 'krotkosc' },
   { name: 'Jan Chryzostom Pasek',   hint: 'ok. 1636–1701', nurt: 'sarmacki',    utwor: 'pamietniki' }
 ];
+const Z2_NURTY = [
+  { v: 'metafizyczny', t: 'nurt metafizyczny' },
+  { v: 'dworski',      t: 'nurt dworski' },
+  { v: 'sarmacki',     t: 'nurt sarmacki (ziemiański)' }
+];
+const Z2_UTWORY = [
+  { v: 'sonet',      t: 'Sonet IV. O wojnie naszej…' },
+  { v: 'krotkosc',   t: 'Krótkość żywota' },
+  { v: 'pamietniki', t: 'Pamiętniki' }
+];
 let z2score = null;
 
 (function buildZ2() {
-  const nurty = `<option value="">— wybierz nurt —</option>
-    <option value="metafizyczny">nurt metafizyczny</option>
-    <option value="dworski">nurt dworski</option>
-    <option value="sarmacki">nurt sarmacki (ziemiański)</option>`;
-  const utwory = `<option value="">— wybierz utwór —</option>
-    <option value="sonet">Sonet IV. O wojnie naszej…</option>
-    <option value="krotkosc">Krótkość żywota</option>
-    <option value="pamietniki">Pamiętniki</option>`;
-  document.getElementById('z2').innerHTML = Z2.map((it, i) => `
+  document.getElementById('z2').innerHTML = tasuj(Z2).map((it, i) => `
     <div class="match-row">
       <div class="match-name">${it.name}<em>${it.hint}</em></div>
-      <select class="match-select" id="z2n${i}">${nurty}</select>
-      <select class="match-select" id="z2u${i}">${utwory}</select>
+      <select class="match-select" id="z2n${i}" data-ok="${it.nurt}">${opcje(Z2_NURTY, '— wybierz nurt —')}</select>
+      <select class="match-select" id="z2u${i}" data-ok="${it.utwor}">${opcje(Z2_UTWORY, '— wybierz utwór —')}</select>
     </div>`).join('');
 })();
 
+function sprawdzListy(selektor, fbId, max, label, prog, setter) {
+  let pts = 0;
+  document.querySelectorAll(selektor).forEach(sel => {
+    const ok = sel.value === sel.dataset.ok;
+    sel.classList.add(ok ? 'correct' : 'wrong');
+    sel.disabled = true;
+    if (ok) pts++;
+  });
+  const fb = document.getElementById(fbId);
+  fb.style.display = 'block';
+  fb.className = 'feedback ' + (pts >= prog ? 'ok' : 'nok');
+  fb.textContent = `Wynik: ${pts}/${max} pkt. ${label}`;
+  return pts;
+}
+
 function checkZ2() {
   if (z2score !== null) return;
-  let pts = 0;
-  Z2.forEach((it, i) => {
-    [['n', it.nurt], ['u', it.utwor]].forEach(([k, good]) => {
-      const sel = document.getElementById('z2' + k + i);
-      const ok = sel.value === good;
-      sel.classList.add(ok ? 'correct' : 'wrong');
-      sel.disabled = true;
-      if (ok) pts++;
-    });
-  });
-  z2score = pts;
-  const fb = document.getElementById('fb2');
-  fb.style.display = 'block';
-  fb.className = 'feedback ' + (pts >= 4 ? 'ok' : 'nok');
-  fb.textContent = `Wynik: ${pts}/6 pkt. Sęp-Szarzyński – nurt metafizyczny, Sonet IV; Naborowski – nurt dworski, Krótkość żywota; Pasek – nurt sarmacki, Pamiętniki.`;
+  z2score = sprawdzListy('#z2 select', 'fb2', 6,
+    'Sęp-Szarzyński – nurt metafizyczny, Sonet IV; Naborowski – nurt dworski, Krótkość żywota; Pasek – nurt sarmacki, Pamiętniki.', 4);
 }
 
 // ===== ZADANIE 3 – filozofia =====
@@ -375,37 +407,27 @@ const Z3 = [
   { txt: 'Pogląd uznający prymat ducha (duszy) nad materią.', good: 'spirytualizm' },
   { txt: 'Pogląd, zgodnie z którym najważniejszym narzędziem poznania jest rozum.', good: 'racjonalizm' }
 ];
+const Z3_OPCJE = [
+  { v: 'panteizm',     t: 'panteizm' },
+  { v: 'sceptycyzm',   t: 'sceptycyzm' },
+  { v: 'naturalizm',   t: 'naturalizm' },
+  { v: 'spirytualizm', t: 'spirytualizm' },
+  { v: 'racjonalizm',  t: 'racjonalizm' }
+];
 let z3score = null;
 
 (function buildZ3() {
-  const opts = `<option value="">— wybierz nurt —</option>
-    <option value="panteizm">panteizm</option>
-    <option value="sceptycyzm">sceptycyzm</option>
-    <option value="naturalizm">naturalizm</option>
-    <option value="spirytualizm">spirytualizm</option>
-    <option value="racjonalizm">racjonalizm</option>`;
-  document.getElementById('z3').innerHTML = Z3.map((it, i) => `
+  document.getElementById('z3').innerHTML = tasuj(Z3).map((it, i) => `
     <div class="match-row">
       <div class="match-name" style="min-width:330px; font-weight:400; color:#444; font-size:0.89rem;">${it.txt}</div>
-      <select class="match-select" id="z3s${i}">${opts}</select>
+      <select class="match-select" id="z3s${i}" data-ok="${it.good}">${opcje(Z3_OPCJE, '— wybierz nurt —')}</select>
     </div>`).join('');
 })();
 
 function checkZ3() {
   if (z3score !== null) return;
-  let pts = 0;
-  Z3.forEach((it, i) => {
-    const sel = document.getElementById('z3s' + i);
-    const ok = sel.value === it.good;
-    sel.classList.add(ok ? 'correct' : 'wrong');
-    sel.disabled = true;
-    if (ok) pts++;
-  });
-  z3score = pts;
-  const fb = document.getElementById('fb3');
-  fb.style.display = 'block';
-  fb.className = 'feedback ' + (pts >= 4 ? 'ok' : 'nok');
-  fb.textContent = `Wynik: ${pts}/5 pkt. Panteizm – Spinoza, Bruno; sceptycyzm – Montaigne; naturalizm ↔ spirytualizm to para przeciwieństw; racjonalizm – Kartezjusz.`;
+  z3score = sprawdzListy('#z3 select', 'fb3', 5,
+    'Panteizm – Spinoza, Bruno; sceptycyzm – Montaigne; naturalizm ↔ spirytualizm to para przeciwieństw; racjonalizm – Kartezjusz.', 4);
 }
 
 // ===== ZADANIE 4 – środki =====
@@ -416,37 +438,27 @@ const Z4 = [
   { txt: '„żywy trup", „ciemne światło"', good: 'oksymoron' },
   { txt: '„Byt nasz podniebny" zamiast „nasz byt podniebny"', good: 'inwersja' }
 ];
+const Z4_OPCJE = [
+  { v: 'peryfraza', t: 'peryfraza' },
+  { v: 'parafraza', t: 'parafraza' },
+  { v: 'antyteza',  t: 'antyteza' },
+  { v: 'oksymoron', t: 'oksymoron' },
+  { v: 'inwersja',  t: 'inwersja' }
+];
 let z4score = null;
 
 (function buildZ4() {
-  const opts = `<option value="">— wybierz środek —</option>
-    <option value="peryfraza">peryfraza</option>
-    <option value="parafraza">parafraza</option>
-    <option value="antyteza">antyteza</option>
-    <option value="oksymoron">oksymoron</option>
-    <option value="inwersja">inwersja</option>`;
-  document.getElementById('z4').innerHTML = Z4.map((it, i) => `
+  document.getElementById('z4').innerHTML = tasuj(Z4).map((it, i) => `
     <div class="match-row">
       <div class="match-name" style="min-width:330px; font-weight:400; color:#444; font-size:0.89rem;">${it.txt}</div>
-      <select class="match-select" id="z4s${i}">${opts}</select>
+      <select class="match-select" id="z4s${i}" data-ok="${it.good}">${opcje(Z4_OPCJE, '— wybierz środek —')}</select>
     </div>`).join('');
 })();
 
 function checkZ4() {
   if (z4score !== null) return;
-  let pts = 0;
-  Z4.forEach((it, i) => {
-    const sel = document.getElementById('z4s' + i);
-    const ok = sel.value === it.good;
-    sel.classList.add(ok ? 'correct' : 'wrong');
-    sel.disabled = true;
-    if (ok) pts++;
-  });
-  z4score = pts;
-  const fb = document.getElementById('fb4');
-  fb.style.display = 'block';
-  fb.className = 'feedback ' + (pts >= 4 ? 'ok' : 'nok');
-  fb.textContent = `Wynik: ${pts}/5 pkt. Pamiętaj: peryfraza to OMÓWIENIE (opis zamiast nazwy), a parafraza to PRZERÓBKA cudzego tekstu.`;
+  z4score = sprawdzListy('#z4 select', 'fb4', 5,
+    'Pamiętaj: peryfraza to OMÓWIENIE (opis zamiast nazwy), a parafraza to PRZERÓBKA cudzego tekstu.', 4);
 }
 
 // ===== ZADANIE 5 – pojęcia =====
@@ -483,7 +495,7 @@ function checkZ5() {
     'Klucz: a) kontrreformacja, b) sarmatyzm, c) vanitas, d) homo militans, e) koncept, f) panegiryk.', 4);
 }
 
-// ===== ZADANIE 6 – daty =====
+// ===== ZADANIE 6 – funkcje tkanek / daty =====
 const Z6 = { d1: '1601', d2: '1564', d3: '1669', d4: '1836' };
 let z6score = null;
 
@@ -506,8 +518,21 @@ function checkZ6() {
 }
 
 // ===== ZADANIE 7 – skreślanie =====
-const z7wrong = ['umiar', 'prostota', 'antropo'];
+const Z7 = [
+  { w: 'kontrast',  t: 'kontrast i przeciwieństwo',      skreslic: false },
+  { w: 'umiar',     t: 'harmonia i umiar',               skreslic: true },
+  { w: 'dynamizm',  t: 'dynamizm i ruch',                skreslic: false },
+  { w: 'prostota',  t: 'prostota i oszczędność formy',   skreslic: true },
+  { w: 'przepych',  t: 'przepych i bogata dekoracja',    skreslic: false },
+  { w: 'antropo',   t: 'antropocentryzm',                skreslic: true }
+];
 let z7score = null;
+
+(function buildZ7() {
+  document.getElementById('z7words').innerHTML = tasuj(Z7).map(it =>
+    `<div class="word-chip" onclick="toggleWord(this)" data-skreslic="${it.skreslic ? 1 : 0}">${it.t}</div>`
+  ).join('');
+})();
 
 function toggleWord(el) {
   if (el.dataset.locked) return;
@@ -521,7 +546,7 @@ function checkZ7() {
   chips.forEach(chip => {
     chip.dataset.locked = '1'; chip.onclick = null;
     const crossed = chip.classList.contains('crossed');
-    const should = z7wrong.includes(chip.dataset.word);
+    const should = chip.dataset.skreslic === '1';
     chip.classList.remove('crossed');
     if (crossed && should) { chip.classList.add('correct-cross'); correctCount++; }
     else if (crossed && !should) { chip.classList.add('wrong-cross'); wrongCross = true; }
