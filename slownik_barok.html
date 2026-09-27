@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#f3f0ea">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Barok">
+<meta name="format-detection" content="telephone=no">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-180.png">
+<title>Słownik pojęć — Barok</title>
+<style>
+  @media print { body { background:white; } .no-print { display:none; } .entry { break-inside:avoid; } }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Georgia, Arial, sans-serif; background: #f3f0ea; color: #222; padding: 24px 16px; line-height: 1.6; }
+  .container { max-width: 860px; margin: 0 auto; }
+
+  .backlink { display:inline-block; margin-bottom:14px; font-size:0.85rem; color:#8c3b12; text-decoration:none; background:white; border:1px solid #ddd; border-radius:20px; padding:6px 16px; }
+  .backlink:hover { border-color:#8c3b12; }
+
+  header { background: linear-gradient(135deg, #2b1a10 0%, #8c3b12 100%); color:white; border-radius:14px; padding:28px 32px; margin-bottom:20px; }
+  header .icon { font-size:2.2rem; }
+  header h1 { font-size:1.55rem; font-weight:800; margin:6px 0 4px; }
+  header p { font-size:0.88rem; opacity:0.85; }
+  header .count { display:inline-block; margin-top:12px; background:rgba(255,255,255,0.18); padding:4px 14px; border-radius:20px; font-size:0.82rem; }
+
+  .toolbar { position: sticky; top: 0; z-index: 10; background: #f3f0ea; padding: 10px 0 12px; }
+  .search { width:100%; padding:13px 18px; border:2px solid #dcdcdc; border-radius:12px; font-size:1rem; font-family:inherit; background:white; }
+  .search:focus { outline:none; border-color:#c85a1b; }
+  .alpha { display:flex; flex-wrap:wrap; gap:5px; margin-top:10px; }
+  .alpha button { border:1px solid #ddd; background:white; color:#666; border-radius:7px; width:30px; height:30px; font-size:0.82rem; cursor:pointer; font-family:inherit; }
+  .alpha button:hover:not(:disabled) { border-color:#c85a1b; color:#2b1a10; }
+  .alpha button.active { background:#2b1a10; border-color:#2b1a10; color:white; font-weight:700; }
+  .alpha button:disabled { opacity:0.3; cursor:default; }
+  .alpha button.all { width:auto; padding:0 12px; }
+
+  .dzial-head { font-size:0.78rem; text-transform:uppercase; letter-spacing:2px; color:#8c3b12; font-weight:700; margin:22px 0 8px 4px; }
+
+  .entry { background:white; border-radius:12px; padding:18px 22px; margin-bottom:12px; box-shadow:0 1px 3px rgba(0,0,0,0.07); border-left:4px solid #c85a1b; }
+  .entry h2 { font-size:1.03rem; color:#2b1a10; margin-bottom:6px; font-weight:800; }
+  .entry p { font-size:0.92rem; margin-bottom:7px; }
+  .entry p:last-child { margin-bottom:0; }
+  .entry ol { margin:8px 0 4px 22px; font-size:0.92rem; }
+  .entry ol li { margin-bottom:4px; }
+  .entry mark { background:#ffe89a; border-radius:3px; padding:0 2px; }
+
+  #empty { display:none; text-align:center; color:#888; padding:40px 20px; font-size:0.95rem; }
+  footer { text-align:center; color:#999; font-size:0.78rem; margin-top:26px; }
+
+  /* ——— iPad / Safari ——— */
+  html { -webkit-text-size-adjust: 100%; }
+  * { -webkit-tap-highlight-color: rgba(0,0,0,0); }
+  a, button, select, summary,
+  .stmt-row, .word-chip, .chron-row, .match-select,
+  .card, .mode-card, .answer-btn, .tf-btn, .card-scene, .chip, .alpha button
+  { touch-action: manipulation; }
+  /* Safari na iOS powiększa stronę, gdy pole ma czcionkę < 16px */
+  input, select, textarea { font-size: 16px; }
+  /* efekty hover tylko tam, gdzie kursor faktycznie istnieje */
+  @media (hover: none) {
+    .card:hover, .mode-card:hover, .dept:hover { transform: none; box-shadow: none; }
+  }
+  @supports (padding: max(0px)) {
+    body { padding-left: max(16px, env(safe-area-inset-left)); padding-right: max(16px, env(safe-area-inset-right)); }
+    .hub-link { top: max(12px, env(safe-area-inset-top)); left: max(12px, env(safe-area-inset-left)); }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<a class="backlink no-print" href="index.html">← Menu główne</a>
+
+<header>
+  <div class="icon">🪶</div>
+  <h1>Słownik pojęć — Barok</h1>
+  <p>Oblicza epok 1.2 · WSiP · rozdział 3</p>
+  <div class="count">53 haseł</div>
+</header>
+
+<div class="toolbar no-print">
+  <input class="search" id="q" type="search" placeholder="Szukaj hasła lub słowa w definicji…" autocomplete="off">
+  <div class="alpha" id="alpha"></div>
+</div>
+
+<div id="list"></div>
+<div id="empty">Nic nie znaleziono. Spróbuj innego słowa.</div>
+
+<footer class="no-print">Kliknij hasło, żeby je podświetlić. Ctrl/Cmd + F działa tak samo jak wyszukiwarka powyżej.</footer>
+
+</div>
+
+<script>
+const DATA = [{"g": "", "t": "Antynomia", "d": "<p>Przeciwieństwo; kategorie lub pojęcia, których znaczenia pozostają w opozycji — np. śmierć – życie, niebo – ziemia, wojna – pokój, miłość – nienawiść, świętość – grzech. <strong>Antynomie myśli barokowej</strong> to ujawniające się w niej sprzeczności; wyrażają się przede wszystkim w konflikcie między dążeniem do pewności wiedzy a sferą metafizyki, uznawaną za niepoznawalną przez rozum.</p>"}, {"g": "", "t": "Antropomorfizacja", "d": "<p>Typ metafory polegający na nadawaniu elementom świata pozaludzkiego, zwłaszcza przyrody, cech charakterystycznych tylko dla człowieka — zdolności do myślenia, odczuwania (np. miłości) czy obdarzaniu ich ludzkimi zachowaniami, np. śmiechem, płaczem. W odróżnieniu od personifikacji nie odwołuje się do całości ludzkiej osoby.</p>"}, {"g": "", "t": "Antyteza", "d": "<p>Zestawienie dwóch przeciwstawnych znaczeniowo części wypowiedzi, zwykle o podobnej budowie składniowej. Jeden z podstawowych środków baroku. Przykład z Sępa-Szarzyńskiego: <em>„I nie miłować ciężko, i miłować / Nędzna pociecha\"</em>.</p>"}, {"g": "", "t": "Barok", "d": "<p>Nazwa epoki pochodzi prawdopodobnie od portugalskiego słowa <em>barocco</em>, oznaczającego <strong>perłę o nieregularnym kształcie — rzadką, dziwną, a więc pożądaną</strong>. Początkowo termin miał wydźwięk pejoratywny (sztuka dziwaczna, przeładowana); neutralnego znaczenia nabrał w XIX w. Epoka trwała we Włoszech od końca XVI w., w większości krajów Europy przez cały XVII w. i I połowę XVIII w.</p>"}, {"g": "", "t": "Blaise Pascal", "d": "<p>(1623–1662) — francuski filozof, matematyk i fizyk. Autor <em>Myśli</em>, wydanych pośmiertnie w <strong>1669 r.</strong>; dzieło pozostało nieukończone. W zamierzeniu miało być usystematyzowaną obroną i pochwałą chrześcijaństwa. Istotę ludzką uważał za byt słaby i targany sprzecznymi pragnieniami. Sformułował obraz człowieka jako <strong>„trzciny myślącej\"</strong> — najwątlejszej w przyrodzie, ale myślącej: wielkość człowieka tkwi w mocy jego rozumu, słabość — w tym, że jest bytem nietrwałym i śmiertelnym.</p>"}, {"g": "", "t": "Caravaggio", "d": "<p>(właśc. Michelangelo Merisi, 1573–1610) — jeden z pierwszych <strong>realistów</strong> w malarstwie. W obrazach o tematyce religijnej nadawał świętym rysy prostych ludzi (np. <em>Wątpienie św. Tomasza</em>), co budziło kontrowersje. Jako pierwszy stosował <strong>ostry światłocień</strong>, uwydatniający indywidualność modela. Jego sztuka uformowała <strong>barokowy kanon piękna</strong>.</p>"}, {"g": "", "t": "Dualizm", "d": "<p>Pogląd filozoficzny uznający, że rzeczywistość, a w szczególności człowiek, ma naturę dwoistą. Zdaniem Platona i części jego chrześcijańskich interpretatorów świat składa się z <strong>idei</strong>, które rozpoznaje rozumna dusza, oraz z <strong>materii</strong> tworzącej ciało, powstałej z czterech żywiołów: ognia, powietrza, wody i ziemi. Dualizm był popularny w XVII w.; głosił go m.in. Kartezjusz.</p>"}, {"g": "", "t": "Elipsa", "d": "<p>Celowe pominięcie w zdaniu lub wyrażeniu jakiegoś składnika, często orzeczenia. Powoduje <strong>kondensację</strong> wypowiedzi i aktywizuje odbiorcę, który na podstawie kontekstu sam musi odczytać brakujące znaczenia.</p>"}, {"g": "", "t": "Gianlorenzo Bernini", "d": "<p>(1598–1680) — wywarł wielki wpływ na sztukę baroku, zwłaszcza na architekturę i rzeźbę. Jego twórczość cechują <strong>dynamizm, patos i złożona symbolika</strong> (<em>Fontanna Trytona</em> 1637, <em>Ekstaza świętej Teresy</em> 1642–1652); łączył zmysłowość z religijnością. Zaprojektował monumentalną <strong>kolumnadę na placu św. Piotra</strong> (1657–1667) i ukończył przebudowę bazyliki watykańskiej. Stosowana przez niego <strong>kompozycja spiralna</strong> stała się symbolem sztuki baroku.</p>"}, {"g": "", "t": "Giordano Bruno", "d": "<p>(1548–1600) — włoski filozof, przedstawiciel <strong>panteizmu</strong>. Głosił nieskończoność wszechświata i tożsamość Boga z naturą. Twierdził, że <strong>„piękno jest wielorakie\"</strong>. Spalony na stosie w 1600 r.</p>"}, {"g": "", "t": "Homo militans", "d": "<p>(łac. „człowiek walczący\") — koncepcja człowieka proponowana przez poetów religijnych XVII w., przeciwstawiona popularnemu w renesansie <strong>stoicyzmowi</strong>. Powołaniem człowieka jest heroiczna walka ze słabościami i grzechem o zbawienie duszy; życie utożsamiano z walką, a każdego człowieka — z <strong>rycerzem chrześcijańskim</strong>.</p>"}, {"g": "", "t": "Inwersja", "d": "<p>Szyk przestawny wyrazów; nienaturalna kolejność słów będąca sygnałem mowy uroczystej, podniosłej. Inwersja to jedna z cech charakterystycznych <strong>stylu biblijnego</strong> i stylu barokowego.</p>"}, {"g": "", "t": "Jan Chryzostom Pasek", "d": "<p>(ok. 1636–1701) — pochodził z drobnej szlachty. Pobierał nauki w kolegium jezuickim w Rawie Mazowieckiej, gdzie nauczył się łaciny, nie był jednak gruntownie wykształcony. Jako kilkunastoletni chłopak zaciągnął się do wojska; jedenaście lat służył pod komendą <strong>Stefana Czarnieckiego</strong>, uczestniczył w wojnach ze Szwecją (w Polsce i Danii) oraz z Moskwą. W 1667 r. osiadł na wsi. Według źródeł był złym sąsiadem, <strong>pieniaczem</strong> procesującym się w sądach i urządzającym <strong>zajazdy</strong>. Autor <em>Pamiętników</em> — przedstawiciel <strong>nurtu sarmackiego</strong>.</p>"}, {"g": "", "t": "Kartezjusz (René Descartes)", "d": "<p>(1596–1650) — francuski filozof i matematyk, twórca nowożytnego <strong>racjonalizmu</strong>. Autor formuły <strong>„Myślę, więc jestem\"</strong> (<em>cogito ergo sum</em>). Punktem wyjścia jego metody jest <strong>sceptycyzm metodyczny</strong> — wątpienie we wszystko aż do odnalezienia pewnika. Głosił <strong>dualizm</strong> duszy i ciała.</p>"}, {"g": "", "t": "Koncept", "d": "<p>Niezwykły pomysł poetycki, oparty na grze skojarzeń i zestawieniu odległych pojęć. Polega na ukazaniu analogii i zależności między zjawiskami i rzeczami, które na pozór nie mają ze sobą nic wspólnego. Oddaniu harmonii „zgodnej niezgodności\" i „niezgodnej zgodności\" (tak definiował koncept XVII-wieczny uczony i poeta <strong>Maciej Kazimierz Sarbiewski</strong>) służą środki poetyckie oparte na przeciwieństwach, m.in. <strong>antyteza i oksymoron</strong>.</p>"}, {"g": "", "t": "Kontrreformacja", "d": "<p>Ruch w Kościele katolickim mający na celu <strong>reformę wewnętrzną Kościoła</strong> oraz <strong>walkę z niekatolikami i dominację religijną i polityczną</strong>. Jej programem były uchwały <strong>soboru trydenckiego (1545–1563)</strong>. W Polsce katolicyzm umocnił się od 1564 r., gdy przyjęto uchwały soboru; ogromną rolę odegrali <strong>jezuici</strong>, zwłaszcza w szkolnictwie.</p>"}, {"g": "", "t": "Krótkość żywota", "d": "<p>Wiersz <strong>Daniela Naborowskiego</strong> o nieuchwytności czasu i kruchości ludzkiego życia. Zawiera słynne wyliczenie siedmiu ulotnych zjawisk: <em>„Dźwięk, cień, dym, wiatr, błysk, głos, punkt — żywot ludzki słynie\"</em>. Ludzki byt nazwany jest w nim <strong>„czwartą częścią mgnienia\"</strong>. Utwór <em>Na toż</em> stanowi jego dopełnienie; oba wchodzą w skład serii utworów poświęconych przemijaniu.</p>"}, {"g": "", "t": "Labirynt", "d": "<p>Symbol kultury baroku: przypominał, że życie człowieka jest <strong>trudnym pielgrzymowaniem prowadzącym do zbawienia</strong>. Na grafikach i obrazach ukazywano w sposób alegoryczny człowieka w pielgrzymim stroju jako wędrowca szukającego drogi w labiryncie świata. W okresie baroku labirynty budowano z kamienia, cegły lub formowano z żywopłotów w parkach.</p>"}, {"g": "", "t": "Makaronizm", "d": "<p>Wtrącanie do wypowiedzi w języku polskim wyrazów i zwrotów obcych, zwłaszcza <strong>łacińskich</strong>. Cecha charakterystyczna języka Sarmatów i stylu <em>Pamiętników</em> Jana Chryzostoma Paska.</p>"}, {"g": "", "t": "Marinizm", "d": "<p>Styl poetycki nazwany od nazwiska włoskiego poety <strong>Giambattisty Marina</strong>. Cechują go kunsztowność formy, przepych środków artystycznych, zaskakujące metafory i kult <strong>konceptu</strong>. Naczelna zasada: celem poety jest <strong>zadziwienie odbiorcy</strong>.</p>"}, {"g": "", "t": "Memento mori", "d": "<p>(łac. „pamiętaj o śmierci\") — motyw przypominający o nieuchronności śmierci, przejęty przez barok ze średniowiecza. W sztuce reprezentują go czaszki, klepsydry, zegary, gasnące świece i zwiędłe kwiaty na obrazach i w martwych naturach.</p>"}, {"g": "", "t": "Michel de Montaigne", "d": "<p>(1533–1592) — francuski filozof i eseista, autor dzieła <em>Próby</em>, w którym w drugiej połowie XVI w. <strong>wskrzesił sceptycyzm</strong>. Wyrażał wątpienie w powszechnie przyjęte prawdy i autorytety oraz przeświadczenie o ich względności.</p>"}, {"g": "", "t": "Mikołaj Sęp-Szarzyński", "d": "<p>(ok. 1550–1581) — poeta; urodził się koło Lwowa, w latach 1565–1567 studiował na protestanckich uniwersytetach niemieckich w Wittenberdze i Lipsku (co nie musi oznaczać, że był luteraninem). Po powrocie do kraju gospodarował w majątkach w okolicach Lwowa i Przemyśla. Jest uważany za <strong>pioniera poezji metafizycznej</strong> i <strong>prekursora baroku</strong> w literaturze polskiej; tworzył wiersze o tematyce egzystencjalnej i religijnej, a także erotyki.</p>"}, {"g": "", "t": "Na oczy królewny angielskiej…", "d": "<p>Wiersz <strong>Daniela Naborowskiego</strong>, przykład poezji dworskiej i zarazem <strong>panegiryk</strong>. Jest pochwałą <strong>Elżbiety Stuart</strong> (1596–1662), córki króla Anglii Jakuba I i żony Fryderyka V, nazywanej „królową serc\"; powstał prawdopodobnie w 1619 r. Zbudowany na łańcuchu negacji i antytez („nie oczy, lecz pochodnie… nie gwiazdy, ale słońca…\"), zakończony konceptem: wszystkie porównania zamykają się „w jednym oka słowie\".</p>"}, {"g": "", "t": "Naturalizm", "d": "<p>Pogląd filozoficzny głoszący, że wszystko, co istnieje, należy do <strong>natury</strong> i daje się wyjaśnić prawami przyrody — bez odwoływania się do sił nadprzyrodzonych. Człowiek jest częścią natury i podlega jej prawom. Przeciwieństwo <strong>spirytualizmu</strong>.</p>"}, {"g": "", "t": "Nurt dworski", "d": "<p>Jeden z trzech nurtów literatury polskiego baroku. Cechuje go <strong>otwarcie na nowinki literackie płynące z zachodniej Europy</strong>, podejmowanie modnych tam rozwiązań formalnych, a także nawiązywanie do utworów znanych wówczas twórców włoskich lub francuskich. Tematyka: miłość, uroda, piękno, przemijanie, życie dworskie. Przedstawiciele: <strong>Jan Andrzej Morsztyn, Daniel Naborowski</strong>.</p>"}, {"g": "", "t": "Nurt metafizyczny", "d": "<p>Nurt liryki religijnej tworzonej na przełomie XVI i XVII w. w Polsce, Francji, Anglii i Czechach. Autorzy odrzucali renesansowy <strong>stoicyzm</strong>, nie ufali ideom cnoty, umiaru i spokoju, byli krytyczni wobec autorytetów. Na nowo formułowali trudne pytania o sens i cel ludzkiego istnienia, a odpowiedzi szukali w religii. Ich zainteresowania wykraczały <strong>poza doświadczanie świata</strong> (stąd nazwa) i poza cel ziemskiej egzystencji. Najwybitniejszy przedstawiciel w Polsce: <strong>Mikołaj Sęp-Szarzyński</strong>.</p>"}, {"g": "", "t": "Nurt sarmacki (ziemiański)", "d": "<p>Nurt literatury polskiego baroku związany z życiem i mentalnością szlachty. Tematyka: życie na wsi, wojny, obyczaje, cnoty i wady szlacheckie. Forma prostsza, gawędziarska, z <strong>makaronizmami</strong>. Gatunki: pamiętnik, gawęda, epos, satyra. Przedstawiciele: <strong>Jan Chryzostom Pasek, Wacław Potocki</strong>.</p>"}, {"g": "", "t": "Oksymoron", "d": "<p>Zestawienie dwóch wyrazów o sprzecznych, wykluczających się znaczeniach — najczęściej rzeczownika z epitetem. Przykłady: „żywy trup\", „ciemne światło\", „głośna cisza\", „gorzka słodycz\". Jeden z podstawowych środków barokowego <strong>konceptu</strong>.</p>"}, {"g": "", "t": "Pamiętnik", "d": "<p>Utwór epicki, pisany najczęściej <strong>prozą</strong>. Autor opisuje w nim zdarzenia, których był uczestnikiem lub świadkiem. Relacjonuje je zazwyczaj chronologicznie, ale <strong>z pewnego dystansu czasowego</strong>, np. pod koniec życia — tym różni się od dziennika, pisanego na bieżąco.</p>"}, {"g": "", "t": "Pamiętniki (Paska)", "d": "<p>Dzieło <strong>Jana Chryzostoma Paska</strong>, wyraz idei sarmatyzmu; pisane u schyłku XVII w. (<strong>ok. 1691–1695</strong>). Autor był średniozamożnym szlachcicem, katolikiem, miał przeciętne wykształcenie, ale ogromny talent gawędziarza. Dzieło pozostało w rękopisie i doczekało się wydania dopiero w <strong>1836 r.</strong> — ponad sto lat po śmierci autora. Przyniosło Paskowi pośmiertną sławę i miano <strong>„księcia pamiętnikarzy staropolskich\"</strong>.</p>"}, {"g": "", "t": "Panegiryk", "d": "<p>Utwór pochwalny — pisano je już w starożytności. Mogą mieć różną formę gatunkową (np. pieśń, kazanie). Panegiryk zawsze jest poświęcony konkretnej osobie, z jakichś powodów ważnej dla autora, i opiewa wydarzenia istotne dla tej osoby (narodziny potomka, ślub, pogrzeb), a nawet dla całej społeczności. Jako utwory okolicznościowe panegiryki odgrywały ważną rolę w czasach, gdy nie było jeszcze prasy — mogły upowszechniać poglądy polityczne mecenasa i kreować jego pozytywny wizerunek.</p>"}, {"g": "", "t": "Panteizm", "d": "<p>Pogląd filozoficzny <strong>utożsamiający Boga z naturą</strong> i wszechświatem. Bóg nie jest osobą istniejącą poza światem — przenika całą rzeczywistość i jest z nią tożsamy. Przedstawiciele: <strong>Baruch Spinoza</strong> (formuła <em>Deus sive Natura</em> — „Bóg, czyli Natura\") i <strong>Giordano Bruno</strong>.</p>"}, {"g": "", "t": "Paradoks", "d": "<p>Sformułowanie zaskakujące, pozornie sprzeczne z logiką lub z powszechnie przyjętym poglądem, lecz kryjące w sobie głębszą prawdę. Częsty środek w poezji metafizycznej.</p>"}, {"g": "", "t": "Parafraza", "d": "<p><strong>Swobodna przeróbka cudzego tekstu</strong>, która zachowuje jego zasadniczy sens, ale zmienia formę, rozwija go lub przenosi w nowy kontekst. Przykład: pierwszy wers <em>Sonetu IV</em> Sępa-Szarzyńskiego jest parafrazą wersetu „Bojowaniem jest żywot człowieczy na ziemi\" z biblijnej Księgi Hioba. <strong>Nie mylić z peryfrazą.</strong></p>"}, {"g": "", "t": "Peryfraza", "d": "<p>Omówienie — zastąpienie nazwy rzeczy lub osoby <strong>opisem, wieloznacznym omówieniem</strong>. Zamiast nazwać wprost, opisuje się cechy. Przykłady: „srogi ciemności hetman\" zamiast <em>szatan</em>, „Febus wąsaty\" zamiast <em>słońce</em>, „wieczna i prawa piękność\" zamiast <em>Bóg</em>.</p>"}, {"g": "", "t": "Peter Paul Rubens", "d": "<p>(1577–1640) — był gruntownie wykształcony, władał biegle siedmioma językami, łączył elegancję z umiejętnościami dyplomatycznymi; jako poseł jeździł do Madrytu, Paryża i Londynu, został obdarzony szlachectwem. Uprawiał malarstwo religijne, mitologiczne, batalistyczne i portretowe; był twórcą bardzo płodnym (ok. <strong>2000 płócien</strong>). Jego malarstwo cechuje <strong>bogata paleta barw, dynamizm przedstawień i zmysłowość</strong>. Stworzył specyficzny kanon urody: kobiety o obfitych kształtach — w polszczyźnie do dziś funkcjonuje określenie <strong>„rubensowskie kształty\"</strong>.</p>"}, {"g": "", "t": "Przerzutnia", "d": "<p>Przeniesienie części wypowiedzenia do następnego wersu. Rozbija regularny rytm wiersza i pozwala wyeksponować wybrane słowa.</p>"}, {"g": "", "t": "Racjonalizm", "d": "<p>Pogląd, zgodnie z którym <strong>najważniejszym narzędziem poznania jest rozum</strong>, a zmysłowe doświadczenie nas łudzi. Wiek XVII to w filozofii europejskiej okres racjonalizmu. Główny przedstawiciel: <strong>Kartezjusz</strong>.</p>"}, {"g": "", "t": "Rytmy abo Wiersze polskie", "d": "<p>Jedyny tomik <strong>Mikołaja Sępa-Szarzyńskiego</strong>, składający się z około pięćdziesięciu utworów. Poeta nie publikował swoich wierszy za życia — ukazały się dopiero dwadzieścia lat po jego śmierci, w <strong>1601 r.</strong> Data wydania <strong>symbolicznie otwiera nową epokę w polskiej kulturze</strong>.</p>"}, {"g": "", "t": "Sarmatyzm", "d": "<p>Powszechna w epoce baroku <strong>ideologia i styl życia szlachty</strong> polskiej, oparta na przekonaniu (obecnym już w XVI w.), że szlachta wywodzi się od starożytnych <strong>Sarmatów</strong> — walecznego ludu, który cenił wolność i demokrację. Podstawą sarmatyzmu było przekonanie o wyjątkowej roli państwa polsko-litewskiego, będącego ostoją <strong>„złotej wolności\"</strong> szlacheckiej i katolicyzmu, a także spichlerzem Europy. Przeświadczenie o doskonałości ustroju powodowało niechęć do zmian politycznych i obyczajowych; z tego konserwatyzmu wynikały <strong>megalomania</strong> i <strong>ksenofobia</strong>.</p>"}, {"g": "", "t": "Sarmacki mesjanizm", "d": "<p>Ideologia uznająca XVII-wiecznych Sarmatów za <strong>naród wybrany przez Boga</strong>. Wynikała z przekonania o wyjątkowej roli Rzeczypospolitej, której historyczną misją miała być obrona chrześcijańskiej Europy przed islamskim zagrożeniem ze strony imperium osmańskiego — stąd określenie <strong>„przedmurze chrześcijaństwa\"</strong>.</p>"}, {"g": "", "t": "Sceptycyzm", "d": "<p>Postawa filozoficzna wyrażająca <strong>wątpienie w powszechnie przyjęte prawdy i autorytety</strong>, przeświadczenie o ich względności. Wynika z przekonania o niemożliwości uzyskania wiedzy pewnej i niepodważalnej. Narodził się już w antyku, a w drugiej połowie XVI w. wskrzesił go <strong>Michel de Montaigne</strong> w dziele <em>Próby</em>. Podczas gdy renesansowi intelektualiści byli przekonani, że piękno można obiektywnie zdefiniować, myśliciele schyłku XVI w. i baroku uważali, że „piękno jest wielorakie\" (Giordano Bruno) i subiektywne.</p>"}, {"g": "", "t": "Sobór trydencki", "d": "<p>Sobór obradujący w latach <strong>1545–1563</strong>, którego uchwały stały się programem <strong>kontrreformacji</strong>. W Polsce przyjęto je w <strong>1564 r.</strong>, co umocniło pozycję katolicyzmu.</p>"}, {"g": "", "t": "Sonet", "d": "<p>Kunsztowny gatunek liryczny o ściśle określonej budowie: <strong>14 wersów</strong> ułożonych w dwie strofy czterowersowe i dwie trzywersowe (<strong>4 + 4 + 3 + 3</strong>). Pierwsze osiem wersów (oktawa) ma zwykle charakter <strong>opisowy</strong>, ostatnie sześć (sekstyna) — <strong>refleksyjno-filozoficzny</strong>, zakończony puentą. Między częściami następuje przełom toku myślenia. Powstał we Włoszech w XIII w., rozpowszechnił go Petrarka. W tej formie Sęp-Szarzyński zapisywał refleksje nad sensem i celem ludzkiego istnienia.</p>"}, {"g": "", "t": "Sonet IV. O wojnie naszej, którą wiedziemy z szatanem, światem i ciałem", "d": "<p>Utwór <strong>Mikołaja Sępa-Szarzyńskiego</strong>. Przedstawia życie człowieka jako nieustanną <strong>wojnę z trzema wrogami</strong>: szatanem („srogi ciemności hetman\"), światem („łakome marności\") i własnym ciałem. Człowiek jest <strong>„wątły, niebaczny, rozdwojony w sobie\"</strong> — sam nie ma szans w tej walce; ratunkiem jest Bóg: „Ty mnie przy sobie postaw, a przezpiecznie / Będę wojował i wygram statecznie!\". Pierwszy wers parafrazuje Księgę Hioba.</p>"}, {"g": "", "t": "Sonet V. O nietrwałej miłości rzeczy świata tego", "d": "<p>Utwór <strong>Mikołaja Sępa-Szarzyńskiego</strong> oparty na <strong>paradoksie miłości</strong>: „I nie miłować ciężko, i miłować / Nędzna pociecha\". Złoto, władza, sława, rozkosz i piękne oblicze nie mogą nasycić ludzkiego serca, bo wszystko, co materialne, przemija. Prawdziwym celem miłości jest Bóg — <strong>„wieczna i prawa piękność\"</strong>; dusza, która Go nie widzi, pozostaje nienasycona.</p>"}, {"g": "", "t": "Spirytualizm", "d": "<p>Pogląd filozoficzny uznający <strong>prymat ducha (duszy) nad materią</strong>. Rzeczywistość duchowa jest pierwotna i ważniejsza od materialnej. Przeciwieństwo <strong>naturalizmu</strong>.</p>"}, {"g": "", "t": "Spinoza (Baruch Spinoza)", "d": "<p>(1632–1677) — filozof holenderski, przedstawiciel <strong>panteizmu</strong>. Głosił tożsamość Boga i natury, wyrażoną formułą <em>Deus sive Natura</em> („Bóg, czyli Natura\"). Autor <em>Etyki</em>.</p>"}, {"g": "", "t": "Uroboros", "d": "<p>Wąż pożerający własny ogon — symbol <strong>cykliczności czasu</strong>, obecny w sztuce baroku, a także współcześnie, np. w biżuterii.</p>"}, {"g": "", "t": "Vanitas", "d": "<p>(łac. „marność\") — pojęcie mające źródło w biblijnej <strong>Księdze Koheleta</strong>; oznacza znikomość, bezwartościowość rzeczy i spraw ludzkich. Formuła <em>vanitas vanitatum</em> („marność nad marnościami\") utarła się jako określenie spraw ludzkich w świecie materialnym i samego świata materialnego. Motyw <strong>vanitas</strong> jest jednym z najważniejszych tematów sztuki i literatury baroku.</p>"}, {"g": "", "t": "Wojna trzydziestoletnia", "d": "<p>Wielki konflikt międzynarodowy lat <strong>1618–1648</strong>, w którym wzięła udział większość państw ówczesnej Europy. Rzeczpospolita formalnie w nim nie uczestniczyła, choć udzielała pomocy austriackim Habsburgom.</p>"}, {"g": "", "t": "Zegary i klepsydry", "d": "<p>Symbole kultury baroku przypominające o <strong>nieuchronnym upływie czasu</strong> i zbliżającej się śmierci; należą do symboliki <strong>vanitas</strong>, znanej z Księgi Koheleta. W okresie baroku wytwarzano już zegary do użytku osobistego, mierzące nawet sekundy — czasomierze były wówczas tak rozpowszechnione, że epokę baroku nazywa się niekiedy <strong>„stuleciem zegarów\"</strong>.</p>"}];
+
+function norm(s) {
+  return s.toLowerCase()
+    .replace(/ą/g,'a').replace(/ć/g,'c').replace(/ę/g,'e').replace(/ł/g,'l')
+    .replace(/ń/g,'n').replace(/ó/g,'o').replace(/ś/g,'s').replace(/ź/g,'z').replace(/ż/g,'z')
+    .replace(/[-–—]/g,' ').replace(/\s+/g,' ').trim();
+}
+
+const list = document.getElementById('list');
+const empty = document.getElementById('empty');
+const q = document.getElementById('q');
+let activeLetter = null;
+
+const letters = [...new Set(DATA.map(e => norm(e.t)[0].toUpperCase()))].sort();
+const alpha = document.getElementById('alpha');
+const allBtn = document.createElement('button');
+allBtn.textContent = 'Wszystkie';
+allBtn.className = 'all active';
+allBtn.onclick = () => { activeLetter = null; setActive(allBtn); render(); };
+alpha.appendChild(allBtn);
+letters.forEach(L => {
+  const b = document.createElement('button');
+  b.textContent = L;
+  b.onclick = () => { activeLetter = L; setActive(b); render(); };
+  alpha.appendChild(b);
+});
+
+function setActive(btn) {
+  alpha.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function highlight(text, needle) {
+  if (!needle) return text;
+  const parts = [];
+  const nText = norm(text), nNeedle = norm(needle);
+  let i = 0, from = 0;
+  while ((i = nText.indexOf(nNeedle, from)) !== -1) {
+    parts.push(text.slice(from, i), '<mark>', text.slice(i, i + needle.length), '</mark>');
+    from = i + needle.length;
+    if (needle.length === 0) break;
+  }
+  parts.push(text.slice(from));
+  return parts.join('');
+}
+
+function render() {
+  const needle = q.value.trim();
+  const n = norm(needle);
+  let shown = 0, lastDzial = null;
+  list.innerHTML = '';
+
+  DATA.forEach(e => {
+    if (activeLetter && norm(e.t)[0].toUpperCase() !== activeLetter) return;
+    if (n && !norm(e.t).includes(n) && !norm(e.d).includes(n)) return;
+
+    if (e.g && e.g !== lastDzial) {
+      const h = document.createElement('div');
+      h.className = 'dzial-head';
+      h.textContent = e.g;
+      list.appendChild(h);
+      lastDzial = e.g;
+    }
+
+    const div = document.createElement('div');
+    div.className = 'entry';
+    div.innerHTML = '<h2>' + highlight(e.t, needle) + '</h2>' + e.d;
+    list.appendChild(div);
+    shown++;
+  });
+
+  empty.style.display = shown ? 'none' : 'block';
+}
+
+q.addEventListener('input', render);
+render();
+</script>
+</body>
+</html>

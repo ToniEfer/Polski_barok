@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#f3f0ea">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Barok">
+<meta name="format-detection" content="telephone=no">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-180.png">
+<title>Barok – streszczenie działu</title>
+<style>
+  @media print {
+    body { background: white; font-size: 11pt; }
+    .no-print { display: none; }
+    .chapter { break-inside: avoid; page-break-inside: avoid; }
+    header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Georgia, Arial, sans-serif; background: #f3f0ea; color: #222; padding: 24px 16px; line-height: 1.65; }
+  .container { max-width: 900px; margin: 0 auto; }
+
+  .backlink { display: inline-block; margin-bottom: 14px; font-size: 0.85rem; color: #8c3b12; text-decoration: none; background: white; border: 1px solid #ddd; border-radius: 20px; padding: 6px 16px; }
+  .backlink:hover { border-color: #8c3b12; }
+
+  header {
+    background: linear-gradient(135deg, #2b1a10 0%, #8c3b12 55%, #c85a1b 100%);
+    color: white; border-radius: 14px; padding: 32px 36px; margin-bottom: 22px;
+  }
+  header h1 { font-size: 1.85rem; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 6px; }
+  header p { font-size: 0.92rem; opacity: 0.86; }
+  .header-meta { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+  .header-meta span { background: rgba(255,255,255,0.18); padding: 5px 14px; border-radius: 20px; font-size: 0.83rem; }
+
+  .checklist { background: #fff8e8; border: 1px solid #e8c88a; border-radius: 12px; padding: 20px 24px; margin-bottom: 24px; }
+  .checklist h2 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; color: #8a6510; margin-bottom: 12px; }
+  .checklist ol { margin-left: 20px; font-size: 0.88rem; columns: 2; column-gap: 28px; }
+  .checklist li { margin-bottom: 5px; break-inside: avoid; }
+  .checklist a { color: #8c3b12; text-decoration: none; }
+  .checklist a:hover { text-decoration: underline; }
+  @media (max-width: 680px) { .checklist ol { columns: 1; } }
+
+  .chapter { background: white; border-radius: 12px; padding: 26px 30px; margin-bottom: 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+  .ch-header { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 18px; }
+  .ch-num { min-width: 42px; height: 42px; border-radius: 10px; background: #8c3b12; color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.05rem; }
+  .ch-title { font-size: 1.15rem; font-weight: 800; color: #2b1a10; padding-top: 8px; }
+  .ch-subtitle { font-size: 0.82rem; color: #888; margin-top: 2px; }
+
+  h3 { font-size: 0.95rem; font-weight: 700; color: #8c3b12; margin: 18px 0 8px; border-left: 3px solid #c85a1b; padding-left: 10px; }
+  p { font-size: 0.92rem; margin-bottom: 10px; }
+  ul, ol { margin: 8px 0 12px 20px; }
+  li { font-size: 0.92rem; margin-bottom: 5px; }
+
+  .highlight-box { background: #faf0e2; border-radius: 8px; padding: 12px 16px; margin: 12px 0; font-size: 0.9rem; }
+  .highlight-box strong { color: #8c3b12; }
+  .def-box { background: #ede7f6; border-left: 4px solid #5e35b1; border-radius: 8px; padding: 12px 16px; margin: 12px 0; font-size: 0.92rem; }
+  .def-box strong { color: #4527a0; }
+  .warn-box { background: #fff8e1; border-left: 4px solid #f9a825; border-radius: 8px; padding: 12px 16px; margin: 12px 0; font-size: 0.9rem; }
+  .warn-box strong { color: #b57800; }
+
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 0.87rem; }
+  th, td { border: 1px solid #e3e0da; padding: 8px 10px; text-align: left; vertical-align: top; }
+  th { background: #faf0e2; color: #8c3b12; font-weight: 700; }
+  tr:nth-child(even) td { background: #fbfaf8; }
+  td strong { color: #8c3b12; }
+
+  .timeline { border-left: 3px solid #e3e0da; padding-left: 18px; margin: 10px 0; }
+  .tl-item { position: relative; margin-bottom: 12px; }
+  .tl-item::before { content: ''; position: absolute; left: -23px; top: 5px; width: 10px; height: 10px; border-radius: 50%; background: #8c3b12; border: 2px solid white; box-shadow: 0 0 0 2px #8c3b12; }
+  .tl-date { font-size: 0.8rem; font-weight: 800; color: #8c3b12; }
+  .tl-text { font-size: 0.9rem; color: #333; }
+
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; margin: 12px 0; }
+  .mini { background: #faf0e2; border-radius: 8px; padding: 13px 15px; font-size: 0.86rem; }
+  .mini h4 { color: #8c3b12; font-size: 0.92rem; margin-bottom: 5px; }
+
+  .nurt { border-radius: 10px; padding: 16px 20px; margin-bottom: 12px; font-size: 0.9rem; border-left: 4px solid; }
+  .nurt h4 { font-size: 1rem; margin-bottom: 8px; }
+  .n-meta { background: #ede7f6; border-color: #5e35b1; }
+  .n-meta h4 { color: #4527a0; }
+  .n-dwor { background: #fce4ec; border-color: #ad1457; }
+  .n-dwor h4 { color: #880e4f; }
+  .n-ziem { background: #e8f5e9; border-color: #2e7d32; }
+  .n-ziem h4 { color: #1b5e20; }
+
+  .poem { background: #fbfaf8; border: 1px solid #e8e4dc; border-radius: 8px; padding: 14px 18px; font-family: Georgia, serif; font-size: 0.9rem; line-height: 1.7; margin: 10px 0; }
+  .poem .src { display: block; margin-top: 8px; font-family: 'Segoe UI', sans-serif; font-size: 0.78rem; color: #888; font-style: italic; }
+
+  .sonnet-map { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin: 12px 0; }
+  .sq { border-radius: 8px; padding: 12px 14px; font-size: 0.83rem; }
+  .sq h5 { font-size: 0.88rem; margin-bottom: 4px; }
+  .sq-a { background: #e3f2fd; } .sq-a h5 { color: #0d47a1; }
+  .sq-b { background: #fff3e0; } .sq-b h5 { color: #e65100; }
+
+  .summary-box { background: linear-gradient(135deg, #2b1a10, #c85a1b); color: white; border-radius: 12px; padding: 22px 28px; margin-top: 24px; }
+  .summary-box h2 { font-size: 1rem; margin-bottom: 14px; opacity: 0.85; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+  .keys { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 8px; }
+  .key { background: rgba(255,255,255,0.15); border-radius: 8px; padding: 9px 13px; font-size: 0.85rem; }
+  .key strong { display: block; font-size: 0.95rem; margin-bottom: 2px; }
+
+  @media (max-width: 600px) { header h1 { font-size: 1.35rem; } }
+
+  /* ——— iPad / Safari ——— */
+  html { -webkit-text-size-adjust: 100%; }
+  * { -webkit-tap-highlight-color: rgba(0,0,0,0); }
+  a, button, select, summary,
+  .stmt-row, .word-chip, .chron-row, .match-select,
+  .card, .mode-card, .answer-btn, .tf-btn, .card-scene, .chip, .alpha button
+  { touch-action: manipulation; }
+  /* Safari na iOS powiększa stronę, gdy pole ma czcionkę < 16px */
+  input, select, textarea { font-size: 16px; }
+  /* efekty hover tylko tam, gdzie kursor faktycznie istnieje */
+  @media (hover: none) {
+    .card:hover, .mode-card:hover, .dept:hover { transform: none; box-shadow: none; }
+  }
+  @supports (padding: max(0px)) {
+    body { padding-left: max(16px, env(safe-area-inset-left)); padding-right: max(16px, env(safe-area-inset-right)); }
+    .hub-link { top: max(12px, env(safe-area-inset-top)); left: max(12px, env(safe-area-inset-left)); }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<a class="backlink no-print" href="index.html">← Menu główne</a>
+
+<header>
+  <h1>Barok — streszczenie działu</h1>
+  <p>Rozdział 3 &nbsp;|&nbsp; <em>Oblicza epok 1.2</em>, WSiP &nbsp;|&nbsp; lekcje 31–50 (s. 164–253)</p>
+  <div class="header-meta">
+    <span>Ramy i nazwa epoki</span>
+    <span>Kontrreformacja</span>
+    <span>Filozofia</span>
+    <span>Sztuka i motywy</span>
+    <span>Nurty literatury</span>
+    <span>Sęp-Szarzyński</span>
+    <span>Naborowski</span>
+    <span>Sarmatyzm i Pasek</span>
+  </div>
+</header>
+
+<div class="checklist no-print">
+  <h2>Lista od nauczyciela — klikaj, żeby przejść do rozdziału</h2>
+  <ol>
+    <li><a href="#s1">ramy czasowe, nazwa epoki, cechy</a></li>
+    <li><a href="#s2">kontrreformacja</a></li>
+    <li><a href="#s3">światopogląd baroku a średniowiecze</a></li>
+    <li><a href="#s4">filozofia epoki i jej przedstawiciele</a></li>
+    <li><a href="#s5">panteizm, sceptycyzm, naturalizm, spirytualizm</a></li>
+    <li><a href="#s6">motywy kultury i sztuki baroku</a></li>
+    <li><a href="#s7">architektura i sztuka — cechy</a></li>
+    <li><a href="#s8">podział literatury polskiej</a></li>
+    <li><a href="#s9">Mikołaj Sęp-Szarzyński</a></li>
+    <li><a href="#s10">budowa sonetu</a></li>
+    <li><a href="#s11">motywy nurtu metafizycznego</a></li>
+    <li><a href="#s12">Daniel Naborowski</a></li>
+    <li><a href="#s13">sarmatyzm i cechy Sarmaty</a></li>
+    <li><a href="#s14">Jan Chryzostom Pasek</a></li>
+    <li><a href="#s15">środki artystyczne epoki</a></li>
+  </ol>
+</div>
+
+<!-- 1 -->
+<div class="chapter" id="s1">
+  <div class="ch-header">
+    <div class="ch-num">1</div>
+    <div>
+      <div class="ch-title">Ramy czasowe, nazwa i cechy epoki</div>
+      <div class="ch-subtitle">Barok — epoka przeciwieństw</div>
+    </div>
+  </div>
+
+  <h3>Ramy czasowe</h3>
+  <table>
+    <tr><th>Gdzie</th><th>Kiedy</th><th>Wydarzenia graniczne</th></tr>
+    <tr><td><strong>Włochy</strong> (kolebka epoki)</td><td>od końca <strong>XVI w.</strong></td><td>barok narodził się we Włoszech i stamtąd promieniował na Europę</td></tr>
+    <tr><td><strong>Europa</strong></td><td><strong>cały XVII w. i I połowa XVIII w.</strong></td><td>w większości krajów europejskich</td></tr>
+    <tr><td><strong>Polska</strong></td><td>od przełomu <strong>XVI/XVII w.</strong> do poł. <strong>XVIII w.</strong></td><td>umowny początek: <strong>1601</strong> — wydanie <em>Rytmów abo Wierszy polskich</em> Sępa-Szarzyńskiego; koniec: początek panowania Stanisława Augusta Poniatowskiego (1764)</td></tr>
+  </table>
+
+  <div class="highlight-box">
+    Kultura baroku miała charakter <strong>ekspansywny</strong>: oprócz Europy objęła także <strong>Amerykę Południową i Amerykę Północną</strong>, dokąd sztukę i literaturę przenieśli Hiszpanie i Portugalczycy.
+  </div>
+
+  <h3>Skąd nazwa epoki</h3>
+  <div class="def-box">
+    Nazwa pochodzi prawdopodobnie od <strong>portugalskiego słowa <em>barocco</em></strong>, oznaczającego <strong>perłę o nieregularnym kształcie — rzadką, dziwną, a więc pożądaną</strong>.
+  </div>
+  <p>Początkowo termin miał <strong>wydźwięk pejoratywny</strong> — klasycyści XVIII w. używali go na określenie sztuki dziwacznej, przeładowanej i pozbawionej umiaru. Dopiero w <strong>XIX wieku</strong> nazwa straciła negatywne zabarwienie i stała się neutralną nazwą epoki.</p>
+
+  <h3>Dlaczego „epoka przeciwieństw"</h3>
+  <p>Z jednej strony to okres <strong>niesłychanego rozwoju</strong> architektury, malarstwa, muzyki, literatury i sztuki ogrodów, a także przełomowych odkryć przyrodoznawstwa. Z drugiej — czas <strong>połowań na czarownice</strong> i <strong>wyniszczających wojen</strong>, często wszczynanych z pobudek religijnych, powiązanych z <strong>głodem</strong> i oziębieniem klimatu (tzw. <em>mała epoka lodowa</em>). Poczucie <strong>niestabilności</strong> stało się w tym czasie udziałem niemal wszystkich Europejczyków.</p>
+
+  <h3>Charakterystyczne cechy epoki</h3>
+  <ul>
+    <li><strong>Kontrast i przeciwieństwo (antynomia)</strong> jako zasada budowania świata i dzieła.</li>
+    <li><strong>Niepokój, dynamizm, ruch</strong> zamiast renesansowej harmonii i umiaru.</li>
+    <li><strong>Religijność</strong> i powrót do pytań o Boga, duszę, zbawienie, sens życia.</li>
+    <li><strong>Przepych i bogactwo formy</strong> — ozdobność, przeładowanie, olśniewanie odbiorcy.</li>
+    <li><strong>Poczucie przemijania</strong> — świadomość kruchości życia i marności rzeczy.</li>
+    <li><strong>Dwoistość natury człowieka</strong> — konflikt duszy i ciała, rozumu i zmysłów.</li>
+    <li><strong>Kult zaskoczenia</strong> — sztuka ma zadziwiać, olśniewać i zaskakiwać (<em>koncept</em>).</li>
+  </ul>
+
+  <div class="warn-box">
+    <strong>Tło historyczne:</strong> XVII w. to <strong>wojna trzydziestoletnia (1618–1648)</strong>, w której Rzeczpospolita formalnie nie brała udziału, choć udzielała pomocy austriackim Habsburgom. W Europie rosły tendencje <strong>absolutystyczne</strong>; wyjątkami były Rzeczpospolita Obojga Narodów i Republika Wenecka.
+  </div>
+</div>
+
+<!-- 2 -->
+<div class="chapter" id="s2">
+  <div class="ch-header">
+    <div class="ch-num">2</div>
+    <div>
+      <div class="ch-title">Kontrreformacja</div>
+      <div class="ch-subtitle">Kontekst religijny epoki</div>
+    </div>
+  </div>
+
+  <div class="def-box">
+    <strong>Kontrreformacja</strong> (reforma katolicka) — ruch w Kościele katolickim mający na celu <strong>reformę wewnętrzną Kościoła</strong> oraz <strong>walkę z niekatolikami i dominację religijną i polityczną</strong>. Jej programem były uchwały <strong>soboru trydenckiego (1545–1563)</strong>.
+  </div>
+
+  <h3>Skutki i zjawiska towarzyszące</h3>
+  <ul>
+    <li><strong>Podział religijny Europy</strong> — katolicyzm, różne odłamy protestantyzmu, prawosławie, islam.</li>
+    <li>Zasada, że <strong>władca ustala religię państwa</strong> (<em>cuius regio, eius religio</em>) — poddany innego wyznania mógł być uznany za heretyka zaraz po przekroczeniu granicy swojej ojczyzny.</li>
+    <li>Brak idei <strong>porozumienia i współpracy</strong> między odłamami chrześcijaństwa (nie znano wówczas ekumenizmu).</li>
+    <li><strong>Konwersje</strong> — niepokoje i wątpliwości religijne prowadziły wielu ludzi do zmiany wyznania.</li>
+    <li>Szerzyła się <strong>nietolerancja religijna</strong>, inspirowana przez tych, którzy na danym obszarze stanowili większość wyznaniową.</li>
+    <li>Sztuka stała się narzędziem propagandy religijnej — <strong>sztuka baroku służy Kościołowi</strong>: ma poruszać, wzruszać i przekonywać.</li>
+  </ul>
+
+  <div class="highlight-box">
+    <strong>W Polsce:</strong> katolicyzm umacniał się od <strong>1564 r.</strong>, gdy przyjęto uchwały soboru trydenckiego. Ogromną rolę odegrał zakon <strong>jezuitów</strong> — przede wszystkim w szkolnictwie (kolegia jezuickie; uczył się w nich m.in. Jan Chryzostom Pasek).
+  </div>
+</div>
+
+<!-- 3 -->
+<div class="chapter" id="s3">
+  <div class="ch-header">
+    <div class="ch-num">3</div>
+    <div>
+      <div class="ch-title">Barok a średniowiecze</div>
+      <div class="ch-subtitle">Do której epoki nawiązuje barokowy światopogląd</div>
+    </div>
+  </div>
+
+  <p>Barokowy światopogląd nawiązuje do <strong>średniowiecza</strong> — i jednocześnie stanowi odrzucenie optymizmu renesansu. Renesansowe wyobrażenia o ładzie i harmonii świata zaprzeczyły odkrycia naukowe z przełomu XVI i XVII w.</p>
+
+  <table>
+    <tr><th>Cecha wspólna</th><th>Średniowiecze</th><th>Barok</th></tr>
+    <tr><td><strong>Teocentryzm</strong></td><td>Bóg w centrum świata i myślenia</td><td>powrót do Boga jako punktu odniesienia po antropocentryzmie renesansu</td></tr>
+    <tr><td><strong>Motyw vanitas</strong></td><td><em>marność nad marnościami</em>, nietrwałość dóbr ziemskich</td><td>ta sama Księga Koheleta jako główna maksyma refleksji egzystencjalnej</td></tr>
+    <tr><td><strong>Memento mori</strong></td><td>taniec śmierci, pamięć o śmierci</td><td>czaszki, klepsydry, zegary, martwe natury z symbolami przemijania</td></tr>
+    <tr><td><strong>Ascetyzm i religijność</strong></td><td>ideał świętego, umartwianie ciała</td><td><em>homo militans</em> — człowiek walczący z grzechem i pokusami ciała</td></tr>
+    <tr><td><strong>Dualizm duszy i ciała</strong></td><td>ciało jako więzienie duszy</td><td>człowiek „rozdwojony w sobie", rozdarty między duszą a ciałem</td></tr>
+    <tr><td><strong>Życie jako pielgrzymka</strong></td><td><em>homo viator</em> — człowiek wędrowiec</td><td>labirynt jako symbol trudnej wędrówki ku zbawieniu</td></tr>
+  </table>
+
+  <div class="warn-box">
+    <strong>Częste pytanie:</strong> „do której epoki nawiązuje barok?" → <strong>do średniowiecza</strong>: teocentryzm, vanitas, memento mori, ascetyzm, dualizm duszy i ciała, życie jako wędrówka. A czego <em>nie</em> przejmuje po renesansie? Optymizmu, wiary w harmonię świata, antropocentryzmu i stoickiego ideału umiaru.
+  </div>
+</div>
+
+<!-- 4 -->
+<div class="chapter" id="s4">
+  <div class="ch-header">
+    <div class="ch-num">4</div>
+    <div>
+      <div class="ch-title">Filozofia baroku i jej przedstawiciele</div>
+      <div class="ch-subtitle">Antynomie myśli barokowej</div>
+    </div>
+  </div>
+
+  <p>Filozofowie XVII w. są pierwszymi wielkimi myślicielami nowożytności. W filozofii europejskiej to okres <strong>racjonalizmu</strong> — poglądu, zgodnie z którym <strong>najważniejszym narzędziem poznania jest rozum</strong>, a zmysłowe doświadczenie nas łudzi.</p>
+
+  <div class="def-box">
+    <strong>Antynomie myśli barokowej</strong> — ujawniające się w niej przeciwieństwa. Wyrażają się przede wszystkim w <strong>konflikcie między dążeniem do pewności wiedzy a sferą metafizyki</strong>, uznawaną za niepoznawalną przez rozum.
+  </div>
+
+  <h3>Cztery bieguny filozofii XVII w.</h3>
+  <div class="cards">
+    <div class="mini"><h4>Problematyka metafizyczna</h4>Bóg, szatan, wieczność, zbawienie</div>
+    <div class="mini"><h4>Teologiczna spekulatywność</h4>analiza abstrakcyjnych problemów religijnych</div>
+    <div class="mini"><h4>Matematyczna systematyczność</h4>zapis formalny, porządek logiczny</div>
+    <div class="mini"><h4>Racjonalizm metody</h4>wnioskowanie logiczne, racjonalna argumentacja</div>
+  </div>
+
+  <h3>Przedstawiciele</h3>
+  <table>
+    <tr><th>Filozof</th><th>Pogląd / dzieło</th><th>Co trzeba wiedzieć</th></tr>
+    <tr>
+      <td><strong>Blaise Pascal</strong><br>(1623–1662)</td>
+      <td><em>Myśli</em> (wyd. pośmiertnie <strong>1669</strong>)</td>
+      <td>Człowiek jest <strong>„trzciną myślącą"</strong> — najwątlejszą w przyrodzie, ale myślącą. Wielkość człowieka tkwi w mocy rozumu, słabość — w tym, że jest bytem nietrwałym i śmiertelnym. Chrześcijaństwo to przestrzeń <strong>dramatycznych wyborów</strong>. Autor <strong>zakładu Pascala</strong>: bardziej opłaca się wierzyć w Boga niż nie wierzyć.</td>
+    </tr>
+    <tr>
+      <td><strong>René Descartes<br>(Kartezjusz)</strong><br>(1596–1650)</td>
+      <td><em>Rozprawa o metodzie</em>; racjonalizm, <strong>dualizm</strong></td>
+      <td><strong>„Myślę, więc jestem"</strong> (<em>cogito ergo sum</em>). Punktem wyjścia jest <strong>sceptycyzm metodyczny</strong> — wątpić we wszystko, aż znajdzie się pewnik. Głosił dualizm duszy i ciała.</td>
+    </tr>
+    <tr>
+      <td><strong>Baruch Spinoza</strong><br>(1632–1677)</td>
+      <td><em>Etyka</em>; <strong>panteizm</strong></td>
+      <td>Bóg jest tożsamy z naturą (<em>Deus sive Natura</em> — „Bóg, czyli Natura"). Świat jest jedną substancją.</td>
+    </tr>
+    <tr>
+      <td><strong>Michel de Montaigne</strong><br>(1533–1592)</td>
+      <td><em>Próby</em>; <strong>sceptycyzm</strong></td>
+      <td>Wskrzesił sceptycyzm w drugiej połowie XVI w. — wątpienie w powszechnie przyjęte prawdy i autorytety. <strong>„Czyż ja wiem?"</strong></td>
+    </tr>
+    <tr>
+      <td><strong>Giordano Bruno</strong><br>(1548–1600)</td>
+      <td>panteizm, nieskończoność wszechświata</td>
+      <td>Głosił, że wszechświat jest nieskończony, a Bóg przenika całą naturę. Spalony na stosie w 1600 r. Twierdził też, że <strong>„piękno jest wielorakie"</strong>.</td>
+    </tr>
+    <tr>
+      <td><strong>Galileusz</strong><br>(1564–1642)</td>
+      <td>teleskop, obserwacje nieba</td>
+      <td>Skonstruował teleskop — dzięki niemu zobaczono plamy na Słońcu i księżyce Jowisza. (Naborowski słuchał jego wykładów w Padwie.)</td>
+    </tr>
+    <tr>
+      <td><strong>Francis Bacon</strong><br>(1561–1626)</td>
+      <td>empiryzm</td>
+      <td>Doświadczenie jako źródło wiedzy. O poezji: jej piękno wynika z wyobraźni, która „wynajduje niedozwolone małżeństwa i rozwody między rzeczami".</td>
+    </tr>
+  </table>
+
+  <div class="highlight-box">
+    <strong>Przełom naukowy epoki:</strong> teleskop pozwolił obserwować niebo, a wynaleziony przez Holendrów <strong>mikroskop</strong> — dostrzec świat dotąd niewidzialny (bakterie, ciałka krwi). Wszechświat rozszerzył się dla człowieka <strong>w makro- i w mikroskali</strong>. Badania empiryczne dowiodły, że nie można już ufać dawnym autorytetom naukowym (np. Arystotelesowi). Ludzie nowej epoki, <strong>zawieszeni między nieskończonością wielkości a bezmiarem małości</strong>, odczuwali lęk i niepokój.
+  </div>
+</div>
+
+<!-- 5 -->
+<div class="chapter" id="s5">
+  <div class="ch-header">
+    <div class="ch-num">5</div>
+    <div>
+      <div class="ch-title">Cztery nurty filozoficzne — do wykucia</div>
+      <div class="ch-subtitle">Panteizm, sceptycyzm, naturalizm, spirytualizm</div>
+    </div>
+  </div>
+
+  <table>
+    <tr><th style="width:18%">Nurt</th><th>Na czym polega</th><th style="width:22%">Przedstawiciele</th></tr>
+    <tr>
+      <td><strong>Panteizm</strong></td>
+      <td>Pogląd utożsamiający <strong>Boga z naturą / wszechświatem</strong>. Bóg nie jest osobą poza światem — przenika cały świat i jest z nim tożsamy.</td>
+      <td>Baruch Spinoza, Giordano Bruno</td>
+    </tr>
+    <tr>
+      <td><strong>Sceptycyzm</strong></td>
+      <td>Postawa wyrażająca <strong>wątpienie w powszechnie przyjęte prawdy i autorytety</strong>, przeświadczenie o ich względności. Wynika z przekonania o niemożliwości uzyskania wiedzy pewnej i niepodważalnej. Narodził się w antyku, wskrzeszony w II poł. XVI w.</td>
+      <td>Michel de Montaigne (<em>Próby</em>), Kartezjusz (sceptycyzm metodyczny)</td>
+    </tr>
+    <tr>
+      <td><strong>Naturalizm</strong></td>
+      <td>Pogląd, że <strong>wszystko, co istnieje, należy do natury</strong> i daje się wyjaśnić prawami przyrody — bez odwoływania się do sił nadprzyrodzonych. Człowiek jest częścią natury i podlega jej prawom.</td>
+      <td>myśliciele empiryczni XVII w.; nurt obecny u Bacona</td>
+    </tr>
+    <tr>
+      <td><strong>Spirytualizm</strong></td>
+      <td>Przeciwieństwo naturalizmu: pogląd uznający <strong>prymat ducha (duszy) nad materią</strong>. Rzeczywistość duchowa jest pierwotna i ważniejsza niż materialna.</td>
+      <td>myśl chrześcijańska epoki, poezja metafizyczna</td>
+    </tr>
+  </table>
+
+  <div class="warn-box">
+    <strong>Pary przeciwieństw do zapamiętania:</strong> <em>naturalizm ↔ spirytualizm</em> (materia kontra duch), <em>racjonalizm ↔ sceptycyzm</em> (pewność rozumu kontra wątpienie), <em>panteizm ↔ teizm osobowy</em> (Bóg tożsamy z naturą kontra Bóg osobowy poza światem). Barok mieści je wszystkie naraz — stąd „epoka przeciwieństw".
+  </div>
+
+  <div class="highlight-box">
+    <strong>Dualizm</strong> — pogląd uznający, że rzeczywistość, a w szczególności człowiek, ma naturę <strong>dwoistą</strong>. Zdaniem Platona i jego chrześcijańskich interpretatorów świat składa się z <strong>idei</strong>, które rozpoznaje rozumna dusza, oraz z <strong>materii</strong> tworzącej ciało, powstałej z czterech żywiołów (ogień, powietrze, woda, ziemia). Dualizm był popularny w XVII w. — głosił go m.in. Kartezjusz.
+  </div>
+</div>
+
+<!-- 6 -->
+<div class="chapter" id="s6">
+  <div class="ch-header">
+    <div class="ch-num">6</div>
+    <div>
+      <div class="ch-title">Motywy i symbole kultury baroku</div>
+      <div class="ch-subtitle">Uniwersalny kod zrozumiały dla ludzi w całej Europie</div>
+    </div>
+  </div>
+
+  <p>Barokowi pisarze i twórcy sztuk plastycznych operowali <strong>uniwersalnym kodem symbolicznym</strong>. Najważniejsze symbole:</p>
+
+  <div class="cards">
+    <div class="mini"><h4>Kirke (Circe)</h4>Czarodziejka z <em>Odysei</em> — patronka ulubionej w baroku <strong>przemiany (metamorfozy)</strong>, a także siły uwodzenia.</div>
+    <div class="mini"><h4>Kohelet</h4>Mędrzec ze Starego Testamentu. Słowa <strong>„marność nad marnościami i wszystko marność"</strong> to główna maksyma barokowej refleksji egzystencjalnej.</div>
+    <div class="mini"><h4>Kwiaty</h4>Zwłaszcza modne w XVII w. <strong>tulipany</strong> — symbol piękna świata, a zarazem <strong>nietrwałości</strong> tego, co materialne.</div>
+    <div class="mini"><h4>Labirynt</h4>Życie człowieka jako <strong>trudne pielgrzymowanie prowadzące do zbawienia</strong>. Człowiek w stroju pielgrzyma szuka drogi w labiryncie świata.</div>
+    <div class="mini"><h4>Paw</h4>Symbol <strong>wspaniałości i splendoru</strong> świata ziemskiego, fascynacji zmysłami; zarazem symbol <strong>pychy</strong> i złudności piękna.</div>
+    <div class="mini"><h4>Światłocień</h4>Światło i mrok nabierają znaczeń symbolicznych: <strong>światło ma mistyczne źródło, ciemność oznacza władzę zła</strong>.</div>
+    <div class="mini"><h4>Zegary i klepsydry</h4>Przypominają o <strong>nieuchronnym upływie czasu</strong> i zbliżającej się śmierci. Symbol <strong>vanitas</strong>. Barok bywa nazywany <strong>„stuleciem zegarów"</strong>.</div>
+    <div class="mini"><h4>Czaszka</h4><strong>Memento mori</strong> — „pamiętaj o śmierci". Stały element martwych natur i portretów.</div>
+    <div class="mini"><h4>Uroboros</h4>Wąż pożerający własny ogon — obrazuje <strong>cykliczność czasu</strong>.</div>
+    <div class="mini"><h4>Bańka mydlana</h4><em>homo bulla</em> — „człowiek jest bańką": kruchość i ulotność ludzkiego życia.</div>
+  </div>
+
+  <div class="def-box">
+    <strong>Vanitas</strong> (łac. „marność") — pojęcie mające źródło w biblijnej <strong>Księdze Koheleta</strong>; oznacza znikomość, bezwartościowość rzeczy i spraw ludzkich. Formuła <strong><em>vanitas vanitatum</em></strong> („marność nad marnościami") utarła się jako określenie spraw ludzkich w świecie materialnym i samego świata materialnego.
+  </div>
+
+  <h3>Główne tematy literatury i sztuki epoki</h3>
+  <ul>
+    <li><strong>Przemijanie i śmierć</strong> (vanitas, memento mori, <em>ubi sunt</em>)</li>
+    <li><strong>Czas</strong> — jego nieuchwytność i nieubłagany bieg</li>
+    <li><strong>Piękno</strong> — jego zmienność i subiektywność</li>
+    <li><strong>Miłość</strong> — zmysłowa i dworska, ujęta w wyrafinowaną formę</li>
+    <li><strong>Walka człowieka z pokusami</strong> i troska o zbawienie</li>
+    <li><strong>Dwoistość natury ludzkiej</strong> — dusza kontra ciało</li>
+  </ul>
+</div>
+
+<!-- 7 -->
+<div class="chapter" id="s7">
+  <div class="ch-header">
+    <div class="ch-num">7</div>
+    <div>
+      <div class="ch-title">Architektura i sztuka baroku</div>
+      <div class="ch-subtitle">Elementy charakterystyczne</div>
+    </div>
+  </div>
+
+  <h3>Architektura — cechy charakterystyczne</h3>
+  <ul>
+    <li><strong>Monumentalizm</strong> — ogromna skala budowli, majestat i przepych.</li>
+    <li><strong>Bogata dekoracja</strong> — złocenia, sztukaterie, freski, marmury, rzeźby na fasadach.</li>
+    <li><strong>Dynamizm i ruch</strong> — faliste, wygięte fasady, linie krzywe zamiast prostych.</li>
+    <li><strong>Kolumny</strong> — zwłaszcza <strong>spiralne (skręcone, tzw. solomońskie)</strong>, pilastry, gzymsy.</li>
+    <li><strong>Kopuły</strong> nad skrzyżowaniem naw, często z latarnią.</li>
+    <li><strong>Iluzja i złudzenie optyczne</strong> — freski sufitowe otwierające przestrzeń ku niebu, mistrzowskie operowanie perspektywą.</li>
+    <li><strong>Światłocień</strong> jako element kompozycji — kontrast oświetlenia buduje nastrój.</li>
+    <li><strong>Ogrody i fontanny</strong> — układy geometryczne, labirynty z żywopłotów, dywany kwiatowe, ogromne parki (koszt ogrodu bywał równy kosztowi budowy pałacu).</li>
+    <li><strong>Sztuka na usługach Kościoła</strong> — wnętrza mają poruszać zmysły i wzbudzać religijne wzruszenie.</li>
+  </ul>
+
+  <h3>Malarstwo i rzeźba — twórcy z podręcznika</h3>
+  <table>
+    <tr><th>Artysta</th><th>Co trzeba wiedzieć</th></tr>
+    <tr><td><strong>Caravaggio</strong><br>(właśc. Michelangelo Merisi, 1573–1610)</td><td>Jeden z pierwszych <strong>realistów</strong> w malarstwie. Świętym nadawał rysy prostych ludzi (<em>Wątpienie św. Tomasza</em>), co budziło kontrowersje. Jako pierwszy stosował <strong>ostry światłocień</strong>, uwydatniający indywidualność modela (<em>Narcyz nad źródłem</em>, <em>Wskrzeszenie Łazarza</em>). Uformował <strong>barokowy kanon piękna</strong>.</td></tr>
+    <tr><td><strong>Peter Paul Rubens</strong><br>(1577–1640)</td><td>Gruntownie wykształcony, władał siedmioma językami, jeździł jako poseł. Bardzo płodny (ok. <strong>2000 płócien</strong>). Malarstwo cechuje <strong>bogata paleta barw, dynamizm i zmysłowość</strong>. Stworzył specyficzny kanon urody: <strong>kobiety o obfitych kształtach</strong> — stąd do dziś „rubensowskie kształty". Obraz <em>Trzy Gracje</em>.</td></tr>
+    <tr><td><strong>Gianlorenzo Bernini</strong><br>(1598–1680)</td><td>Największy wpływ na architekturę i rzeźbę baroku. Cechy twórczości: <strong>dynamizm, patos, złożona symbolika</strong> (<em>Fontanna Trytona</em> 1637, <em>Ekstaza świętej Teresy</em> 1642–1652). Łączył zmysłowość z religijnością. Zaprojektował monumentalną <strong>kolumnadę na placu św. Piotra</strong> (1657–1667), ukończył przebudowę bazyliki watykańskiej. <strong>Kompozycja spiralna</strong> stała się wręcz symbolem sztuki baroku.</td></tr>
+    <tr><td><strong>Diego Velázquez</strong><br>(1599–1660)</td><td>Hiszpański malarz związany z dworem królewskim w Madrycie, mistrz malarstwa <strong>rodzajowego i historycznego</strong>. Rozmach i monumentalizm ujęć, zamiłowanie do <strong>ukrytych treści psychologicznych</strong> (motyw zwierciadła). <em>Las Meninas</em> (1656), znany w Polsce jako <em>Panny dworskie</em>.</td></tr>
+    <tr><td><strong>Rembrandt van Rijn</strong></td><td>Mistrz światłocienia; <em>Straż nocna</em> (1642).</td></tr>
+  </table>
+</div>
+
+<!-- 8 -->
+<div class="chapter" id="s8">
+  <div class="ch-header">
+    <div class="ch-num">8</div>
+    <div>
+      <div class="ch-title">Podział literatury polskiego baroku</div>
+      <div class="ch-subtitle">Trzy nurty — to pytanie pada niemal zawsze</div>
+    </div>
+  </div>
+
+  <div class="nurt n-meta">
+    <h4>1. Nurt metafizyczny (religijny)</h4>
+    <p><strong>Kto:</strong> Mikołaj Sęp-Szarzyński (prekursor), Sebastian Grabowiecki.</p>
+    <p><strong>Tematyka:</strong> relacja człowiek – Bóg – świat, kondycja ludzka, przemijanie, zbawienie, walka z grzechem, dwoistość natury człowieka.</p>
+    <p><strong>Forma:</strong> uporządkowana — przede wszystkim <strong>sonet</strong>; język pełen antytez, inwersji, peryfraz.</p>
+    <p><strong>Postawa:</strong> <em>homo militans</em> — człowiek walczący; odrzucenie renesansowego stoicyzmu i ideału umiaru.</p>
+  </div>
+
+  <div class="nurt n-dwor">
+    <h4>2. Nurt dworski</h4>
+    <p><strong>Kto:</strong> Jan Andrzej Morsztyn, Daniel Naborowski.</p>
+    <p><strong>Tematyka:</strong> miłość, uroda, piękno, przemijanie, życie dworskie; utwory okolicznościowe i pochwalne.</p>
+    <p><strong>Forma:</strong> wyrafinowana i kunsztowna — <strong>koncept</strong>, gra słów, zaskakujące zestawienia; <strong>marinizm</strong> (od włoskiego poety Giambattisty Marina) i <strong>konceptyzm</strong>. Gatunki: sonet, panegiryk, fraszka, anakreontyk.</p>
+    <p><strong>Cechy:</strong> otwarcie na nowinki literackie z zachodniej Europy, podejmowanie modnych tam rozwiązań formalnych, nawiązywanie do twórców włoskich i francuskich.</p>
+  </div>
+
+  <div class="nurt n-ziem">
+    <h4>3. Nurt ziemiański / sarmacki (szlachecki)</h4>
+    <p><strong>Kto:</strong> Jan Chryzostom Pasek, Wacław Potocki, Jan Andrzej Morsztyn jako satyryk obyczajowy.</p>
+    <p><strong>Tematyka:</strong> życie szlachty na wsi, wojny, obyczaje, cnoty sarmackie, krytyka wad szlacheckich.</p>
+    <p><strong>Forma:</strong> prostsza, gawędziarska, bliska mowie potocznej; <strong>makaronizmy</strong> (wtrącenia łacińskie). Gatunki: <strong>pamiętnik</strong>, gawęda, epos, satyra.</p>
+    <p><strong>Postawa:</strong> pochwała ziemiańskiego, spokojnego życia; ideał <em>złotej wolności</em>.</p>
+  </div>
+
+  <div class="warn-box">
+    <strong>Jak to zapamiętać:</strong> <em>metafizyczny</em> — patrzy <strong>w górę</strong> (Bóg, zbawienie); <em>dworski</em> — patrzy <strong>na formę</strong> (koncept, olśnienie); <em>sarmacki</em> — patrzy <strong>wokół siebie</strong> (dwór szlachecki, wojna, obyczaj).
+  </div>
+</div>
+
+<!-- 9 -->
+<div class="chapter" id="s9">
+  <div class="ch-header">
+    <div class="ch-num">9</div>
+    <div>
+      <div class="ch-title">Mikołaj Sęp-Szarzyński</div>
+      <div class="ch-subtitle">Prekursor baroku w literaturze polskiej — nurt metafizyczny</div>
+    </div>
+  </div>
+
+  <h3>Sylwetka</h3>
+  <ul>
+    <li><strong>ok. 1550–1581</strong> — poeta; urodził się koło Lwowa.</li>
+    <li>W latach <strong>1565–1567</strong> studiował na <strong>protestanckich uniwersytetach niemieckich</strong> w Wittenberdze i Lipsku (co nie musi oznaczać, że był luteraninem).</li>
+    <li>Po powrocie do kraju gospodarował w majątkach w okolicach Lwowa i Przemyśla.</li>
+    <li>Uważany za <strong>pioniera poezji metafizycznej</strong> i <strong>prekursora baroku</strong> w literaturze polskiej.</li>
+    <li>Tworzył wiersze o tematyce <strong>egzystencjalnej i religijnej</strong>, a także erotyki.</li>
+  </ul>
+
+  <div class="highlight-box">
+    <strong>Rytmy abo Wiersze polskie</strong> — jedyny tomik poety. Nie publikował wierszy za życia; ukazały się <strong>dwadzieścia lat po jego śmierci, w 1601 r.</strong>, i liczyły około pięćdziesięciu utworów. Data wydania <strong>symbolicznie otwiera nową epokę w polskiej kulturze</strong>.
+  </div>
+
+  <h3>Poezja metafizyczna — czym jest</h3>
+  <p>Nurt liryki religijnej tworzonej na przełomie XVI i XVII w. w Polsce, Francji, Anglii i Czechach. Jego autorzy:</p>
+  <ul>
+    <li><strong>odrzucali renesansowy stoicyzm</strong>, nie ufali ideom cnoty, umiaru i spokoju,</li>
+    <li>byli <strong>krytyczni wobec autorytetów naukowych i politycznych</strong>,</li>
+    <li>na nowo formułowali <strong>trudne pytania o sens i cel ludzkiego istnienia</strong>, a odpowiedzi szukali w religii,</li>
+    <li>ich zainteresowania wykraczały <strong>poza doświadczanie świata</strong> (stąd nazwa: <em>metafizyczna</em>) i poza cel ziemskiej egzystencji — ku życiu pośmiertnemu,</li>
+    <li>jednocześnie <strong>nie odrzucali codziennych myśli ani uczuć</strong> — refleksje wyrażali często językiem zmysłów, a nawet erotyki.</li>
+  </ul>
+
+  <div class="def-box">
+    <strong>Homo militans</strong> (łac. „człowiek walczący") — koncepcja człowieka proponowana przez poetów religijnych XVII w., przeciwstawiona popularnemu w renesansie <strong>stoicyzmowi</strong>. Powołaniem człowieka jest <strong>heroiczna walka ze słabościami i grzechem o zbawienie duszy</strong>; życie utożsamiano z walką, a każdego człowieka — z <strong>rycerzem chrześcijańskim</strong>.
+  </div>
+
+  <h3>Utwory z podręcznika</h3>
+  <div class="poem">
+    <strong>Sonet IV. O wojnie naszej, którą wiedziemy z szatanem, światem i ciałem</strong><br><br>
+    Pokój — szczęśliwość, ale bojowanie<br>
+    Byt nasz podniebny. On srogi ciemności<br>
+    Hetman i świata łakome marności<br>
+    O nasze pilno czynią zepsowanie.<br>
+    <span class="src">Pierwszy wers parafrazuje werset „Bojowaniem jest żywot człowieczy na ziemi" z Księgi Hioba (Hi 7,1).</span>
+  </div>
+  <p><strong>O czym jest:</strong> życie człowieka to nieustanna <strong>wojna z trzema wrogami</strong> — <strong>szatanem</strong> („srogi ciemności hetman"), <strong>światem</strong> („łakome marności") i własnym <strong>ciałem</strong> („ten nasz dom — ciało"). Człowiek jest <strong>„wątły, niebaczny, rozdwojony w sobie"</strong> — sam nie ma szans. Ratunkiem jest <strong>Bóg</strong>: „Ty mnie przy sobie postaw, a przezpiecznie / Będę wojował i wygram statecznie!".</p>
+
+  <div class="poem">
+    <strong>Sonet V. O nietrwałej miłości rzeczy świata tego</strong><br><br>
+    I nie miłować ciężko, i miłować<br>
+    Nędzna pociecha, gdy żądzą zwiedzione<br>
+    Myśli cukrują nazbyt rzeczy one,<br>
+    Które i mienić, i muszą się psować.
+  </div>
+  <p><strong>O czym jest:</strong> <strong>paradoks miłości</strong> — nie kochać jest ciężko, ale kochać rzeczy tego świata to „nędzna pociecha", bo wszystko, co materialne, przemija. Złoto, sceptr, sława, rozkosz i piękne oblicze nie nasycą serca. Prawdziwym celem miłości jest <strong>Bóg — „wieczna i prawa piękność"</strong>. Dusza, która Go nie widzi, „zawodzi" — pozostaje nienasycona.</p>
+</div>
+
+<!-- 10 -->
+<div class="chapter" id="s10">
+  <div class="ch-header">
+    <div class="ch-num">10</div>
+    <div>
+      <div class="ch-title">Budowa sonetu</div>
+      <div class="ch-subtitle">Gatunek, w który Sęp-Szarzyński ujmował swoje refleksje</div>
+    </div>
+  </div>
+
+  <div class="def-box">
+    <strong>Sonet</strong> — kunsztowny gatunek liryczny o ściśle określonej budowie: <strong>14 wersów</strong> ułożonych w <strong>dwie strofy czterowersowe (tetrastychy)</strong> i <strong>dwie strofy trzywersowe (tercyny)</strong> — układ <strong>4 + 4 + 3 + 3</strong>. Powstał we Włoszech w XIII w., rozpowszechnił go Petrarka.
+  </div>
+
+  <div class="sonnet-map">
+    <div class="sq sq-a"><h5>Strofa 1 (4 wersy)</h5>część <strong>opisowa</strong> — przedstawienie sytuacji, obrazu, problemu</div>
+    <div class="sq sq-a"><h5>Strofa 2 (4 wersy)</h5>dalszy <strong>opis</strong> — rozwinięcie obrazu</div>
+    <div class="sq sq-b"><h5>Strofa 3 (3 wersy)</h5>część <strong>refleksyjna</strong> — komentarz, przemyślenie</div>
+    <div class="sq sq-b"><h5>Strofa 4 (3 wersy)</h5><strong>puenta</strong> — wniosek, zaskakujące zakończenie</div>
+  </div>
+
+  <h3>Zasada kompozycyjna</h3>
+  <ul>
+    <li>Pierwsze <strong>osiem wersów (oktawa)</strong> ma charakter <strong>opisowy</strong> — buduje obraz lub przedstawia problem.</li>
+    <li>Ostatnie <strong>sześć wersów (sekstyna)</strong> ma charakter <strong>refleksyjno-filozoficzny</strong> — zawiera komentarz i puentę.</li>
+    <li>Między oktawą a sekstyną następuje <strong>przełom</strong> (wł. <em>volta</em>) — zmiana toku myślenia.</li>
+    <li>Sonet ma regularny układ <strong>rymów</strong> i często stały metr (u nas najczęściej jedenastozgłoskowiec).</li>
+  </ul>
+
+  <div class="warn-box">
+    <strong>Uwaga przy Sępie-Szarzyńskim:</strong> jego sonety bywają nieregularne — np. <em>Sonet IV</em> ma rymy okalające w strofach czterowersowych. Poeta świadomie <strong>rozsadza klasyczną formę od środka</strong>: uporządkowany gatunek zderza z treścią pełną niepokoju i rozdarcia. To typowo barokowe napięcie między <strong>ładem formy a chaosem przeżycia</strong>.
+  </div>
+</div>
+
+<!-- 11 -->
+<div class="chapter" id="s11">
+  <div class="ch-header">
+    <div class="ch-num">11</div>
+    <div>
+      <div class="ch-title">Motywy nurtu metafizycznego</div>
+      <div class="ch-subtitle">Co musi się pojawić w odpowiedzi na to pytanie</div>
+    </div>
+  </div>
+
+  <ul>
+    <li><strong>Relacja człowiek – Bóg</strong> — Bóg jako jedyny ratunek, „wieczna i prawa piękność", cel ludzkiej miłości.</li>
+    <li><strong>Walka duchowa (<em>homo militans</em>)</strong> — życie jako bojowanie z szatanem, światem i ciałem.</li>
+    <li><strong>Dwoistość i rozdarcie człowieka</strong> — „wątły, niebaczny, rozdwojony w sobie"; konflikt duszy i ciała.</li>
+    <li><strong>Nietrwałość i przemijanie (vanitas)</strong> — marność dóbr materialnych: złota, władzy, sławy, urody.</li>
+    <li><strong>Kondycja ludzka</strong> — słabość, kruchość, niepewność, zagubienie człowieka we wszechświecie.</li>
+    <li><strong>Śmierć i zbawienie</strong> — życie pośmiertne jako właściwy cel egzystencji.</li>
+    <li><strong>Czas</strong> — jego nieubłagany bieg i nieuchwytność.</li>
+    <li><strong>Paradoks istnienia</strong> — sprzeczności, których nie da się rozwiązać rozumem.</li>
+  </ul>
+
+  <div class="highlight-box">
+    <strong>Antynomie</strong> — przeciwieństwa; kategorie lub pojęcia, których znaczenia pozostają w opozycji: <em>śmierć – życie, niebo – ziemia, wojna – pokój, miłość – nienawiść, świętość – grzech</em>. To główne narzędzie budowania sensu w poezji metafizycznej.
+  </div>
+</div>
+
+<!-- 12 -->
+<div class="chapter" id="s12">
+  <div class="ch-header">
+    <div class="ch-num">12</div>
+    <div>
+      <div class="ch-title">Daniel Naborowski</div>
+      <div class="ch-subtitle">Nurt dworski — fenomen piękna i czasu</div>
+    </div>
+  </div>
+
+  <h3>Sylwetka</h3>
+  <ul>
+    <li><strong>1573–1640</strong> — prawdopodobnie <strong>najbardziej wykształcony poeta polskiego baroku</strong>; aż <strong>dwanaście lat</strong> spędził w podróżach edukacyjnych po Zachodniej Europie.</li>
+    <li>Studiował w <strong>Wittenberdze, Strasburgu, Orleanie, Bazylei, Genewie</strong>, a w <strong>Padwie uczestniczył w wykładach Galileusza</strong>.</li>
+    <li>Po powrocie do Polski został <strong>dworzaninem książąt Radziwiłłów</strong>; wyznawca <strong>kalwinizmu</strong>.</li>
+    <li>Na dworach protestanckich magnatów pełnił funkcje: <strong>sekretarza, tłumacza, lekarza, agenta dyplomatycznego, urzędnika</strong>.</li>
+    <li>Władał <strong>łaciną, niemieckim, włoskim i francuskim</strong>; świetnie znał tradycję antyczną i literaturę francuską.</li>
+    <li>Twórczość ma charakter <strong>intelektualny</strong>, często dotyczy <strong>problemu przemijania</strong>; pisał też swawolne fraszki i utwory o bieżącej polityce.</li>
+  </ul>
+
+  <h3>Utwory z podręcznika</h3>
+
+  <div class="poem">
+    <strong>Na oczy królewny angielskiej…</strong><br><br>
+    Twe oczy, skąd Kupido na wsze ziemskie kraje,<br>
+    Córo możnego króla, harde prawa daje,<br>
+    Nie oczy, lecz pochodnie dwie nielitościwe,<br>
+    Które palą na popiół serca nieszczęśliwe.
+    <span class="src">Pochwała Elżbiety Stuart (1596–1662), córki króla Anglii Jakuba I, żony Fryderyka V; nazywano ją „królową serc". Wiersz powstał prawdopodobnie w 1619 r.</span>
+  </div>
+  <p><strong>Gatunek:</strong> <strong>panegiryk</strong> — utwór pochwalny poświęcony konkretnej osobie, opiewający ważne dla niej wydarzenia. Panegiryki jako utwory okolicznościowe odgrywały ważną rolę w czasach, gdy nie było jeszcze prasy: upowszechniały poglądy mecenasa i kreowały jego pozytywny wizerunek.</p>
+  <p><strong>Koncept utworu:</strong> wiersz zbudowany jest na <strong>łańcuchu negacji i antytez</strong> („nie oczy, lecz pochodnie… nie pochodnie, lecz gwiazdy… nie gwiazdy, ale słońca… nie słońca, ale nieba… nie nieba, ale bogowie…"). Poeta stopniowo <strong>wznosi porównania coraz wyżej</strong>, a potem każde z nich odrzuca jako niewystarczające. Puenta: <strong>„Lecz się wszystko zamyka w jednym oka słowie: / Pochodnie, słońca, gwiazdy, nieba i bogowie"</strong> — nazwy wszystkich elementów mieszczą się w jednym słowie „oko".</p>
+  <p><strong>Wymowa:</strong> piękna nie da się obiektywnie zdefiniować — każde porównanie zawodzi. To wyraz barokowego <strong>sceptycyzmu</strong> wobec możliwości opisania piękna.</p>
+
+  <div class="poem">
+    <strong>Krótkość żywota</strong><br><br>
+    Godzina za godziną niepojęcie chodzi:<br>
+    Był przodek, byłeś ty sam, potomek się rodzi.<br>
+    Krótka rozprawa: jutro — coś dziś jest, nie będziesz,<br>
+    A żeś był, nieboszczyka imienia nabędziesz;<br>
+    Dźwięk, cień, dym, wiatr, błysk, głos, punkt — żywot ludzki słynie.
+    <span class="src">Zakończenie: „Między śmiercią, rodzeniem byt nasz ledwie może / Nazwan być czwartą częścią mgnienia; wielom była / Kolebka grobem, wielom matka ich mogiła."</span>
+  </div>
+  <p><strong>O czym jest:</strong> wiersz o <strong>nieuchwytności czasu i kruchości życia</strong>. Słynny wers <strong>5</strong> to <strong>wyliczenie siedmiu ulotnych zjawisk</strong> („Dźwięk, cień, dym, wiatr, błysk, głos, punkt"), do których poeta przyrównuje ludzkie życie — każde z nich trwa ułamek chwili. Ludzki byt to zaledwie <strong>„czwarta część mgnienia"</strong>. Utwór <strong>Na toż</strong> stanowi jego dopełnienie; oba wchodzą w skład serii utworów poświęconych przemijaniu.</p>
+  <p><strong>Motyw:</strong> klasyczne <strong>vanitas</strong> i <em>memento mori</em>. Poeta stawia pytanie o sens ludzkiego życia i poszukuje trwałych wartości, które można przeciwstawić przemijaniu.</p>
+
+  <div class="warn-box">
+    <strong>Kontekst kulturowy:</strong> szczególna wrażliwość na upływ czasu wynikała z <strong>wysokiej śmiertelności</strong> ludzi XVII w. — pełnego wojen i epidemii — oraz z dramatycznych zmian klimatu (tzw. <strong>małe zlodowacenie</strong>). Barok był też pierwszym okresem w historii, kiedy zaczęto nosić <strong>zegarki osobiste</strong>.
+  </div>
+</div>
+
+<!-- 13 -->
+<div class="chapter" id="s13">
+  <div class="ch-header">
+    <div class="ch-num">13</div>
+    <div>
+      <div class="ch-title">Sarmatyzm i cechy polskiego Sarmaty</div>
+      <div class="ch-subtitle">Ideologia i styl życia szlachty</div>
+    </div>
+  </div>
+
+  <div class="def-box">
+    <strong>Sarmatyzm</strong> — powszechna w epoce baroku <strong>ideologia i styl życia szlachty</strong> polskiej, oparta na przekonaniu, że szlachta wywodzi się od starożytnych <strong>Sarmatów</strong> — walecznego ludu, który cenił wolność i demokrację. Przekonanie to pojawiło się już w XVI w.
+  </div>
+
+  <p>W Europie XVII w. niemal w każdym państwie funkcjonował <strong>mit etnogenetyczny</strong> — przekonanie, że współcześni są potomkami świetnych antycznych przodków, górujących pod względem cywilizacyjnym, moralnym i militarnym nad sąsiadami. Sądzono ponadto, że dany naród ma do spełnienia <strong>specjalną misję</strong> i że jest <strong>wybrany przez Boga</strong>.</p>
+
+  <h3>Podstawy ideologii</h3>
+  <ul>
+    <li><strong>Wyjątkowa rola państwa polsko-litewskiego</strong> — ostoja „złotej wolności" szlacheckiej i katolicyzmu, a także <strong>spichlerz Europy</strong>.</li>
+    <li><strong>Przedmurze chrześcijaństwa</strong> — historyczną misją Sarmatów miała być obrona chrześcijańskiej Europy przed islamskim zagrożeniem ze strony imperium osmańskiego (Turcji).</li>
+    <li><strong>Sarmacki mesjanizm</strong> — ideologia uznająca XVII-wiecznych Sarmatów za <strong>naród wybrany przez Boga</strong>.</li>
+    <li><strong>Konserwatyzm</strong> — przeświadczenie o doskonałości ustroju państwa i wyjątkowości szlachty powodowało <strong>niechęć do zmian politycznych i obyczajowych</strong>.</li>
+  </ul>
+
+  <h3>Cechy charakterystyczne polskiego Sarmaty</h3>
+  <div class="cards">
+    <div class="mini"><h4>Megalomania</h4>przeświadczenie o własnej wielkości i wyższości nad innymi narodami</div>
+    <div class="mini"><h4>Ksenofobia</h4>niechęć, a nawet wrogość wobec obcych — uważanych za gorszych pod względem etnicznym, religijnym lub kulturowym</div>
+    <div class="mini"><h4>Konserwatyzm</h4>niechęć do jakichkolwiek zmian, obrona starego porządku</div>
+    <div class="mini"><h4>Gorliwa religijność</h4>przywiązanie do katolicyzmu, często powierzchowne i zewnętrzne (dewocja)</div>
+    <div class="mini"><h4>Umiłowanie „złotej wolności"</h4>obrona przywilejów szlacheckich, liberum veto, wolnej elekcji</div>
+    <div class="mini"><h4>Waleczność i kult rycerskości</h4>duma z tradycji wojennej, gotowość do walki, umiłowanie szabli i konia</div>
+    <div class="mini"><h4>Patriotyzm</h4>szczera miłość do ojczyzny, ale utożsamianej ze stanem szlacheckim</div>
+    <div class="mini"><h4>Przywiązanie do tradycji i obrzędu</h4>strój (kontusz, żupan, pas słucki), uczty, ceremoniał, pogrzeby</div>
+    <div class="mini"><h4>Gościnność i rubaszność</h4>hojne przyjmowanie gości, zamiłowanie do biesiad i przechwałek</div>
+    <div class="mini"><h4>Warcholstwo i pieniactwo</h4>skłonność do awantur, procesów sądowych, zajazdów</div>
+    <div class="mini"><h4>Makaronizowanie</h4>wtrącanie łacińskich słów i zwrotów do polszczyzny</div>
+    <div class="mini"><h4>Życie ziemiańskie</h4>gospodarowanie na wsi jako ideał spokojnego, godnego życia</div>
+  </div>
+
+  <div class="warn-box">
+    <strong>Dwie twarze sarmatyzmu:</strong> w XVI i na początku XVII w. był to zjawisko raczej pozytywne — rycerska duma, patriotyzm, obywatelskość. Z czasem przerodził się w <strong>karykaturę</strong>: megalomanię, ciemnotę, dewocję i warcholstwo, które przyczyniły się do upadku Rzeczypospolitej. Oświecenie krytykowało sarmatyzm bezlitośnie.
+  </div>
+</div>
+
+<!-- 14 -->
+<div class="chapter" id="s14">
+  <div class="ch-header">
+    <div class="ch-num">14</div>
+    <div>
+      <div class="ch-title">Jan Chryzostom Pasek</div>
+      <div class="ch-subtitle">Nurt sarmacki (ziemiański) — <em>Pamiętniki</em></div>
+    </div>
+  </div>
+
+  <h3>Sylwetka</h3>
+  <ul>
+    <li><strong>ok. 1636–1701</strong> — pochodził z <strong>drobnej szlachty</strong>.</li>
+    <li>Pobierał nauki w <strong>kolegium jezuickim w Rawie Mazowieckiej</strong> — tam nauczył się łaciny, nie był jednak gruntownie wykształcony.</li>
+    <li>Już jako kilkunastoletni chłopak <strong>zaciągnął się do wojska</strong>, gdzie jedenaście lat służył pod komendą <strong>Stefana Czarnieckiego</strong>.</li>
+    <li>Uczestniczył w <strong>wojnach ze Szwecją</strong> (na terytorium Polski i Danii) oraz <strong>z Moskwą</strong>.</li>
+    <li>W <strong>1667 r. osiadł na wsi</strong> — od tej pory prowadził życie ziemianina i… awanturnika.</li>
+    <li>Według źródeł był <strong>złym sąsiadem, pieniaczem</strong> wciąż procesującym się w sądach, urządzającym <strong>zajazdy</strong> (zbrojne zajęcia majątku).</li>
+  </ul>
+
+  <div class="highlight-box">
+    <strong><em>Pamiętniki</em></strong> — wyraz idei sarmatyzmu. Pisane u schyłku XVII w. (<strong>ok. 1691–1695</strong>). Autor był średniozamożnym szlachcicem, katolikiem, miał przeciętne wykształcenie, ale <strong>ogromny talent gawędziarza</strong>. Dzieło pozostało w rękopisie i doczekało się wydania dopiero w <strong>1836 r.</strong> — ponad sto lat po śmierci autora. Przyniosły Paskowi pośmiertną sławę i miano <strong>„księcia pamiętnikarzy staropolskich"</strong>.
+  </div>
+
+  <h3>Pamiętnik jako gatunek</h3>
+  <ul>
+    <li><strong>Utwór epicki</strong>, pisany najczęściej <strong>prozą</strong>.</li>
+    <li>Autor opisuje zdarzenia, których był <strong>uczestnikiem lub świadkiem</strong>.</li>
+    <li>Relacjonuje je zazwyczaj <strong>chronologicznie</strong>, ale <strong>z pewnego dystansu czasowego</strong> — np. pod koniec życia.</li>
+    <li>Różnica wobec <strong>dziennika</strong>: dziennik pisze się na bieżąco, pamiętnik — z perspektywy czasu.</li>
+  </ul>
+
+  <h3>Cechy stylu Paska</h3>
+  <ul>
+    <li><strong>Gawędziarski tok</strong> — jak opowieść przy stole, z dygresjami i przechwałkami.</li>
+    <li><strong>Makaronizmy</strong> — obficie wtrącane łacińskie słowa i zwroty.</li>
+    <li><strong>Barwność i obrazowość</strong> — żywe sceny batalistyczne i obyczajowe.</li>
+    <li><strong>Subiektywizm</strong> — Pasek jest bohaterem własnych opowieści, przedstawia siebie w korzystnym świetle.</li>
+    <li><strong>Mimowolny autoportret Sarmaty</strong> — dzieło jest bezcennym źródłem wiedzy o mentalności szlachty: jej odwadze, ale i megalomanii, ksenofobii oraz warcholstwie.</li>
+  </ul>
+</div>
+
+<!-- 15 -->
+<div class="chapter" id="s15">
+  <div class="ch-header">
+    <div class="ch-num">15</div>
+    <div>
+      <div class="ch-title">Środki artystycznego wyrazu epoki</div>
+      <div class="ch-subtitle">Pięć terminów z listy + pojęcia towarzyszące</div>
+    </div>
+  </div>
+
+  <table>
+    <tr><th style="width:16%">Środek</th><th>Definicja</th><th style="width:36%">Przykład</th></tr>
+    <tr>
+      <td><strong>Peryfraza</strong><br>(omówienie)</td>
+      <td>Zastąpienie nazwy jakiejś rzeczy lub osoby <strong>opisem, wieloznacznym omówieniem</strong>. Zamiast nazwać wprost — opisuje się cechy.</td>
+      <td>„srogi ciemności hetman" zamiast <em>szatan</em>; „Febus wąsaty" zamiast <em>słońce</em>; „wieczna i prawa piękność" zamiast <em>Bóg</em></td>
+    </tr>
+    <tr>
+      <td><strong>Parafraza</strong></td>
+      <td><strong>Swobodna przeróbka cudzego tekstu</strong>, która zachowuje jego sens, ale zmienia formę, rozwija go lub przenosi w nowy kontekst. <em>Nie mylić z peryfrazą!</em></td>
+      <td>„Pokój — szczęśliwość, ale bojowanie / Byt nasz podniebny" to parafraza wersetu z Księgi Hioba: „Bojowaniem jest żywot człowieczy na ziemi"</td>
+    </tr>
+    <tr>
+      <td><strong>Antyteza</strong></td>
+      <td>Zestawienie dwóch <strong>przeciwstawnych</strong> znaczeniowo części wypowiedzi, zwykle o podobnej budowie składniowej.</td>
+      <td>„I nie miłować ciężko, i miłować / Nędzna pociecha"; „Pokój — szczęśliwość, ale bojowanie"</td>
+    </tr>
+    <tr>
+      <td><strong>Oksymoron</strong><br>(epitet sprzeczny)</td>
+      <td>Zestawienie <strong>dwóch wyrazów o sprzecznych, wykluczających się znaczeniach</strong> — najczęściej rzeczownika z epitetem.</td>
+      <td>„żywy trup", „ciemne światło", „głośna cisza", „gorzka słodycz"; u Morsztyna miłość to „ogień i lód"</td>
+    </tr>
+    <tr>
+      <td><strong>Inwersja</strong><br>(szyk przestawny)</td>
+      <td><strong>Nienaturalna kolejność słów</strong>, będąca sygnałem mowy uroczystej, podniosłej. Jedna z cech charakterystycznych stylu biblijnego.</td>
+      <td>„Pokój — szczęśliwość, ale bojowanie / <strong>Byt nasz podniebny</strong>" (zamiast: nasz byt podniebny jest bojowaniem)</td>
+    </tr>
+  </table>
+
+  <h3>Pojęcia, które chodzą w parze</h3>
+  <table>
+    <tr><th style="width:20%">Pojęcie</th><th>Znaczenie</th></tr>
+    <tr><td><strong>Koncept</strong></td><td>Niezwykły <strong>pomysł poetycki</strong>, oparty na grze skojarzeń i zestawieniu odległych pojęć. Polega na ukazaniu analogii między zjawiskami, które na pozór nie mają ze sobą nic wspólnego. Oddaniu „zgodnej niezgodności" i „niezgodnej zgodności" (tak definiował koncept XVII-wieczny uczony i poeta <strong>Maciej Kazimierz Sarbiewski</strong>) służą środki oparte na przeciwieństwach: <strong>antyteza i oksymoron</strong>.</td></tr>
+    <tr><td><strong>Marinizm</strong></td><td>Styl poetycki od nazwiska włoskiego poety <strong>Giambattisty Marina</strong>: kunsztowność formy, przepych środków, zaskakujące metafory, kult konceptu. Naczelna zasada: <em>celem poety jest zadziwienie odbiorcy</em>.</td></tr>
+    <tr><td><strong>Konceptyzm</strong></td><td>Nurt poetycki oparty na koncepcie jako głównej zasadzie budowania wiersza.</td></tr>
+    <tr><td><strong>Paradoks</strong></td><td>Sformułowanie zaskakujące, pozornie sprzeczne z logiką, lecz kryjące w sobie głębszą prawdę.</td></tr>
+    <tr><td><strong>Elipsa</strong></td><td>Celowe pominięcie w zdaniu jakiegoś składnika (często orzeczenia). Powoduje <strong>kondensację</strong> wypowiedzi i aktywizuje odbiorcę, który sam musi odczytać brakujące znaczenia.</td></tr>
+    <tr><td><strong>Przerzutnia</strong></td><td>Przeniesienie części wypowiedzenia do następnego wersu; rozbija rytm, podkreśla wybrane słowa.</td></tr>
+    <tr><td><strong>Antropomorfizacja</strong></td><td>Typ metafory: nadawanie elementom świata pozaludzkiego cech charakterystycznych tylko dla człowieka (np. zdolności do myślenia, odczuwania). W odróżnieniu od personifikacji nie odwołuje się do całości ludzkiej osoby.</td></tr>
+    <tr><td><strong>Hiperbola</strong></td><td>Przesadnia — celowe wyolbrzymienie; typowy składnik panegiryku i komplementu.</td></tr>
+  </table>
+
+  <div class="warn-box">
+    <strong>Najczęstsza pomyłka na sprawdzianie:</strong> <em>peryfraza</em> to <strong>omówienie</strong> (zamiast nazwy — opis), a <em>parafraza</em> to <strong>przeróbka cudzego tekstu</strong>. Brzmią podobnie, znaczą co innego.
+  </div>
+</div>
+
+<!-- podsumowanie -->
+<div class="summary-box">
+  <h2>Ściąga — najważniejsze do zapamiętania</h2>
+  <div class="keys">
+    <div class="key"><strong>barocco</strong> perła o nieregularnym kształcie (port.)</div>
+    <div class="key"><strong>1601</strong> <em>Rytmy abo Wiersze polskie</em> — umowny początek baroku w Polsce</div>
+    <div class="key"><strong>1545–1563</strong> sobór trydencki → kontrreformacja</div>
+    <div class="key"><strong>1618–1648</strong> wojna trzydziestoletnia</div>
+    <div class="key"><strong>3 nurty</strong> metafizyczny · dworski · sarmacki</div>
+    <div class="key"><strong>Sęp-Szarzyński</strong> nurt metafizyczny, sonety IV i V</div>
+    <div class="key"><strong>Naborowski</strong> nurt dworski, <em>Krótkość żywota</em>, <em>Na oczy królewny angielskiej…</em></div>
+    <div class="key"><strong>Pasek</strong> nurt sarmacki, <em>Pamiętniki</em> (wyd. 1836)</div>
+    <div class="key"><strong>Sonet</strong> 14 wersów: 4+4+3+3, oktawa opisowa + sekstyna refleksyjna</div>
+    <div class="key"><strong>homo militans</strong> człowiek walczący — przeciw stoicyzmowi</div>
+    <div class="key"><strong>vanitas</strong> marność — z Księgi Koheleta</div>
+    <div class="key"><strong>„trzcina myśląca"</strong> Pascal o człowieku</div>
+    <div class="key"><strong>„Myślę, więc jestem"</strong> Kartezjusz</div>
+    <div class="key"><strong>Deus sive Natura</strong> panteizm Spinozy</div>
+    <div class="key"><strong>Sarmata</strong> megalomania + ksenofobia + konserwatyzm</div>
+    <div class="key"><strong>koncept</strong> zaskakujący pomysł poetycki (Sarbiewski)</div>
+  </div>
+</div>
+
+</div>
+</body>
+</html>

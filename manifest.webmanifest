@@ -1,0 +1,17 @@
+{
+  "name": "Barok — powtórka",
+  "short_name": "Barok",
+  "description": "Materiały do sprawdzianu z baroku: streszczenie, gra, sprawdzian próbny i słownik pojęć.",
+  "start_url": "index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#140c07",
+  "theme_color": "#140c07",
+  "lang": "pl",
+  "icons": [
+    { "src": "icon-180.png", "sizes": "180x180", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#140c07">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Barok">
+<meta name="format-detection" content="telephone=no">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-180.png">
+<title>Barok Quest 🪶</title>
+<style>
+  :root {
+    --brown: #2b1a10;
+    --brown-light: #5a2f14;
+    --amber: #c85a1b;
+    --amber-light: #e08a3c;
+    --amber-glow: #f3c07a;
+    --parchment: #f3e6cf;
+    --bg: #140c07;
+    --card-bg: #251609;
+    --card-border: #5f3514;
+    --text: #f5e9d8;
+    --text-muted: #c2a181;
+    --correct: #6aa84f;
+    --wrong: #c0392b;
+    --heart: #c0392b;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  header {
+    width: 100%;
+    background: linear-gradient(135deg, #0f0600 0%, var(--brown) 50%, #5d3010 100%);
+    padding: 18px 24px;
+    text-align: center;
+    border-bottom: 3px solid var(--amber);
+    position: relative;
+  }
+  header h1 { font-size: 2rem; color: var(--amber-glow); text-shadow: 0 0 20px rgba(232,160,0,0.7); letter-spacing: 2px; }
+  header p { color: var(--text-muted); font-size: 0.9rem; margin-top: 4px; }
+
+  .screen { display: none; width: 100%; max-width: 800px; padding: 24px 16px; }
+  .screen.active { display: block; }
+
+  /* WELCOME */
+  #welcome-screen { text-align: center; }
+  .welcome-icon { font-size: 5rem; margin: 20px 0; }
+  .welcome-title { font-size: 1.8rem; color: var(--amber-light); margin-bottom: 8px; }
+  .welcome-sub { color: var(--text-muted); margin-bottom: 32px; line-height: 1.6; }
+  .mode-cards { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin-bottom: 28px; }
+  .mode-card {
+    background: var(--card-bg);
+    border: 2px solid var(--card-border);
+    border-radius: 16px; padding: 28px 32px; cursor: pointer;
+    transition: all 0.25s; flex: 1; min-width: 200px; max-width: 280px;
+  }
+  .mode-card:hover { border-color: var(--amber); transform: translateY(-4px); box-shadow: 0 8px 24px rgba(201,123,0,0.25); }
+  .mode-card .icon { font-size: 2.8rem; margin-bottom: 12px; }
+  .mode-card h3 { color: var(--amber-light); font-size: 1.2rem; margin-bottom: 8px; }
+  .mode-card p { color: var(--text-muted); font-size: 0.85rem; line-height: 1.5; }
+  .btn-lb {
+    background: transparent; border: 2px solid #6b3e10; color: var(--amber);
+    padding: 10px 28px; border-radius: 30px; font-size: 0.95rem; cursor: pointer; transition: all 0.2s;
+  }
+  .btn-lb:hover { background: #6b3e10; color: var(--parchment); }
+
+  /* FLASHCARDS */
+  #fc-screen { text-align: center; }
+  .fc-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+  .fc-counter { color: var(--amber); font-size: 1rem; font-weight: 600; }
+  .btn-back {
+    background: transparent; border: 1px solid var(--card-border); color: var(--text-muted);
+    padding: 7px 18px; border-radius: 20px; cursor: pointer; font-size: 0.85rem; transition: all 0.2s;
+  }
+  .btn-back:hover { border-color: var(--amber); color: var(--amber); }
+
+  .card-scene { perspective: 1200px; width: 100%; max-width: 600px; height: 280px; margin: 0 auto 24px; cursor: pointer; }
+  .card-3d {
+    width: 100%; height: 100%; position: relative;
+    transform-style: preserve-3d; transition: transform 0.55s cubic-bezier(0.4,0,0.2,1);
+  }
+  .card-3d.flipped { transform: rotateY(180deg); }
+  .card-face {
+    position: absolute; width: 100%; height: 100%; backface-visibility: hidden;
+    border-radius: 18px; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; padding: 28px; border: 2px solid var(--card-border);
+  }
+  .card-front {
+    background: linear-gradient(145deg, var(--card-bg), #3a1a00);
+    border-color: var(--amber);
+  }
+  .card-back {
+    background: linear-gradient(145deg, #1a0a00, #2a1200);
+    border-color: var(--brown-light);
+    transform: rotateY(180deg);
+  }
+  .card-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; color: var(--amber); margin-bottom: 16px; }
+  .card-term { font-size: 1.6rem; font-weight: 700; color: var(--amber-glow); text-align: center; }
+  .card-def { font-size: 0.9rem; color: var(--text); line-height: 1.65; text-align: center; }
+  .card-hint { font-size: 0.8rem; color: var(--text-muted); margin-top: 16px; }
+
+  .fc-nav { display: flex; gap: 14px; justify-content: center; align-items: center; }
+  .btn-nav {
+    background: var(--card-bg); border: 2px solid var(--card-border); color: var(--text);
+    padding: 11px 26px; border-radius: 30px; font-size: 1rem; cursor: pointer; transition: all 0.2s;
+  }
+  .btn-nav:hover:not(:disabled) { border-color: var(--amber); color: var(--amber); }
+  .btn-nav:disabled { opacity: 0.35; cursor: default; }
+  .btn-quiz-start {
+    background: linear-gradient(135deg, var(--amber), var(--amber-light));
+    border: none; color: #1a0800; padding: 13px 36px; border-radius: 30px;
+    font-size: 1rem; font-weight: 700; cursor: pointer; transition: transform 0.2s;
+  }
+  .btn-quiz-start:hover { transform: scale(1.04); }
+
+  .fc-progress { width: 100%; max-width: 600px; height: 5px; background: var(--card-bg); border-radius: 3px; margin: 0 auto 20px; overflow: hidden; }
+  .fc-progress-bar { height: 100%; background: linear-gradient(90deg, var(--amber), var(--amber-glow)); border-radius: 3px; transition: width 0.3s; }
+
+  /* QUIZ */
+  .quiz-status {
+    display: flex; justify-content: space-between; align-items: center;
+    background: var(--card-bg); border: 1px solid var(--card-border);
+    border-radius: 14px; padding: 14px 20px; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;
+  }
+  .status-item { display: flex; flex-direction: column; align-items: center; }
+  .status-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); }
+  .status-val { font-size: 1.2rem; font-weight: 700; color: var(--amber); }
+  .streak-display { color: #ff8c00; }
+
+  .timer-bar-wrap { width: 100%; height: 7px; background: #2a1500; border-radius: 4px; margin-bottom: 20px; overflow: hidden; }
+  .timer-bar { height: 100%; border-radius: 4px; transition: width 0.25s linear, background 0.5s; }
+
+  .question-card {
+    background: var(--card-bg); border: 2px solid var(--card-border);
+    border-radius: 18px; padding: 28px; margin-bottom: 20px;
+  }
+  .q-type { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; color: var(--amber); margin-bottom: 10px; }
+  .q-text { font-size: 1.1rem; line-height: 1.6; color: var(--text); }
+  .q-term { color: var(--amber-glow); font-weight: 700; }
+  .q-num { font-size: 0.82rem; color: var(--text-muted); margin-bottom: 16px; }
+
+  .answers-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+  @media (max-width: 500px) { .answers-grid { grid-template-columns: 1fr; } }
+  .answer-btn {
+    background: var(--card-bg); border: 2px solid var(--card-border);
+    color: var(--text); border-radius: 12px; padding: 14px 16px;
+    font-size: 0.9rem; text-align: left; cursor: pointer; transition: all 0.2s; line-height: 1.4;
+  }
+  .answer-btn:hover:not(.answered) { border-color: var(--amber); color: var(--amber-glow); }
+  .answer-btn.correct { border-color: var(--correct); background: rgba(93,155,93,0.15); color: #a8d5a2; }
+  .answer-btn.wrong { border-color: var(--wrong); background: rgba(192,57,43,0.15); color: #f1948a; }
+  .answer-btn.answered { cursor: default; }
+
+  .tf-row { display: flex; gap: 16px; justify-content: center; }
+  .tf-btn {
+    flex: 1; max-width: 180px; padding: 16px; border-radius: 14px;
+    font-size: 1rem; font-weight: 600; cursor: pointer; border: 2px solid var(--card-border); transition: all 0.2s;
+  }
+  .tf-btn.true-btn { background: rgba(93,155,93,0.1); color: #a8d5a2; }
+  .tf-btn.false-btn { background: rgba(192,57,43,0.1); color: #f1948a; }
+  .tf-btn:hover:not(.answered) { transform: scale(1.04); }
+  .tf-btn.correct { border-color: var(--correct); background: rgba(93,155,93,0.3); }
+  .tf-btn.wrong { border-color: var(--wrong); background: rgba(192,57,43,0.3); }
+
+  .feedback {
+    background: var(--card-bg); border-radius: 12px; padding: 12px 16px;
+    font-size: 0.9rem; line-height: 1.5; display: none; border-left: 4px solid var(--amber);
+  }
+  .feedback.show { display: block; }
+  .feedback.ok { border-color: var(--correct); }
+  .feedback.fail { border-color: var(--wrong); }
+
+  .btn-next {
+    background: linear-gradient(135deg, var(--brown), var(--brown-light));
+    border: none; color: var(--amber); padding: 14px; border-radius: 12px;
+    font-size: 1rem; font-weight: 600; cursor: pointer; transition: opacity 0.2s; display: none; margin-top: 14px; width: 100%;
+  }
+  .btn-next.show { display: block; }
+  .btn-next:hover { opacity: 0.85; }
+
+  /* RESULTS */
+  #results-screen { text-align: center; }
+  .result-icon { font-size: 5rem; margin: 16px 0; }
+  .result-grade { font-size: 2.2rem; font-weight: 800; margin-bottom: 6px; }
+  .result-sub { color: var(--text-muted); margin-bottom: 24px; font-size: 1rem; }
+  .result-stats { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-bottom: 28px; }
+  .stat-box {
+    background: var(--card-bg); border: 1px solid var(--card-border);
+    border-radius: 14px; padding: 18px 24px; min-width: 120px;
+  }
+  .stat-num { font-size: 2rem; font-weight: 800; color: var(--amber); }
+  .stat-lbl { font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+  .compare-box {
+    background: var(--card-bg); border: 1px solid var(--card-border);
+    border-radius: 14px; padding: 16px 20px; margin-bottom: 24px;
+    font-size: 0.92rem; line-height: 1.6; color: var(--text-muted);
+  }
+  .compare-box strong { color: var(--text); }
+  .result-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--amber), var(--amber-light));
+    border: none; color: #1a0800; padding: 13px 32px; border-radius: 30px;
+    font-size: 1rem; font-weight: 700; cursor: pointer; transition: transform 0.2s;
+  }
+  .btn-primary:hover { transform: scale(1.04); }
+  .btn-secondary {
+    background: transparent; border: 2px solid var(--amber); color: var(--amber);
+    padding: 13px 32px; border-radius: 30px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.2s;
+  }
+  .btn-secondary:hover { background: var(--amber); color: #1a0800; }
+
+  /* LEADERBOARD */
+  .lb-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+  .lb-header h2 { color: var(--amber); font-size: 1.5rem; }
+  .lb-chart-wrap { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 14px; padding: 20px; margin-bottom: 20px; }
+  .lb-chart-title { font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 14px; }
+  .chart-bars { display: flex; align-items: flex-end; gap: 6px; height: 120px; }
+  .chart-bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; height: 100%; justify-content: flex-end; }
+  .chart-bar { width: 100%; background: linear-gradient(180deg, var(--amber-glow), var(--amber)); border-radius: 4px 4px 0 0; min-height: 4px; transition: height 0.4s; }
+  .chart-lbl { font-size: 0.65rem; color: var(--text-muted); white-space: nowrap; }
+  .lb-table { width: 100%; border-collapse: collapse; }
+  .lb-table th { background: #1a0a00; color: var(--amber); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 1px; padding: 10px 12px; text-align: left; }
+  .lb-table td { padding: 11px 12px; font-size: 0.88rem; border-bottom: 1px solid rgba(107,62,16,0.3); }
+  .lb-table tr:last-child td { border-bottom: none; }
+  .lb-table tr.record-row td { color: var(--amber-glow); font-weight: 600; }
+  .trend-up { color: #5d9b5d; }
+  .trend-down { color: #c0392b; }
+  .trend-eq { color: var(--text-muted); }
+  .lb-empty { text-align: center; color: var(--text-muted); padding: 40px; font-size: 0.9rem; }
+  .btn-clear { background: transparent; border: 1px solid #4a1a1a; color: #f1948a; padding: 7px 16px; border-radius: 20px; font-size: 0.8rem; cursor: pointer; transition: all 0.2s; }
+  .btn-clear:hover { border-color: var(--wrong); color: var(--wrong); }
+  .record-badge { background: linear-gradient(135deg, var(--amber), var(--amber-glow)); color: #1a0800; font-weight: 700; font-size: 0.8rem; padding: 3px 10px; border-radius: 12px; display: inline-block; margin-left: 8px; }
+
+  /* ——— iPad / Safari ——— */
+  html { -webkit-text-size-adjust: 100%; }
+  * { -webkit-tap-highlight-color: rgba(0,0,0,0); }
+  a, button, select, summary,
+  .stmt-row, .word-chip, .chron-row, .match-select,
+  .card, .mode-card, .answer-btn, .tf-btn, .card-scene, .chip, .alpha button
+  { touch-action: manipulation; }
+  /* Safari na iOS powiększa stronę, gdy pole ma czcionkę < 16px */
+  input, select, textarea { font-size: 16px; }
+  /* efekty hover tylko tam, gdzie kursor faktycznie istnieje */
+  @media (hover: none) {
+    .card:hover, .mode-card:hover, .dept:hover { transform: none; box-shadow: none; }
+  }
+  @supports (padding: max(0px)) {
+    body { padding-left: max(16px, env(safe-area-inset-left)); padding-right: max(16px, env(safe-area-inset-right)); }
+    .hub-link { top: max(12px, env(safe-area-inset-top)); left: max(12px, env(safe-area-inset-left)); }
+  }
+</style>
+</head>
+<body>
+<style>
+  .hub-link {
+    position: fixed; top: 12px; left: 12px; z-index: 999;
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 7px 15px; border-radius: 20px;
+    background: rgba(0,0,0,0.45); border: 1px solid rgba(255,255,255,0.28);
+    color: rgba(255,255,255,0.82); text-decoration: none;
+    font-family: 'Segoe UI', system-ui, sans-serif; font-size: 0.8rem;
+    backdrop-filter: blur(6px); transition: all 0.18s;
+  }
+  .hub-link:hover { background: rgba(0,0,0,0.7); color: #fff; border-color: rgba(255,255,255,0.6); }
+  @media (max-width: 520px) { .hub-link { top: 8px; left: 8px; padding: 5px 11px; font-size: 0.72rem; } }
+</style>
+<a class="hub-link" href="index.html">← Menu</a>
+
+
+<header>
+  <h1>🪶 BAROK QUEST</h1>
+  <p>Barok — epoka przeciwieństw · fiszki i quiz</p>
+</header>
+
+<!-- WELCOME -->
+<div id="welcome-screen" class="screen active">
+  <div class="welcome-icon">⏳</div>
+  <div class="welcome-title">Witaj w Barok Quest!</div>
+  <p class="welcome-sub">Nurty literatury, filozofia epoki, sonety Sępa-Szarzyńskiego, Naborowski i sarmatyzm.<br>
+  Zacznij od fiszek — potem sprawdź się w quizie!</p>
+  <div class="mode-cards">
+    <div class="mode-card" onclick="startFlashcards()">
+      <div class="icon">🃏</div>
+      <h3>Fiszki</h3>
+      <p>Przeglądaj pojęcia i definicje. Kliknij kartę, by ją odwrócić.</p>
+    </div>
+    <div class="mode-card" onclick="startQuiz()">
+      <div class="icon">⚡</div>
+      <h3>Quiz</h3>
+      <p>20 pytań, 3 życia, timer 15 sek. Zdobywaj punkty i bij rekordy!</p>
+    </div>
+  </div>
+  <button class="btn-lb" onclick="showLeaderboard()">🏆 Tabela wyników</button>
+</div>
+
+<!-- FLASHCARDS -->
+<div id="fc-screen" class="screen">
+  <div class="fc-header">
+    <div class="fc-counter" id="fc-counter">1 / 59</div>
+    <button class="btn-back" onclick="showScreen('welcome-screen')">← Powrót</button>
+  </div>
+  <div class="fc-progress"><div class="fc-progress-bar" id="fc-bar" style="width:3%"></div></div>
+  <div class="card-scene" onclick="flipCard()">
+    <div class="card-3d" id="card-3d">
+      <div class="card-face card-front">
+        <div class="card-label">🪶 Pojęcie</div>
+        <div class="card-term" id="fc-term"></div>
+        <div class="card-hint">Kliknij, aby zobaczyć definicję</div>
+      </div>
+      <div class="card-face card-back">
+        <div class="card-label">💡 Definicja</div>
+        <div class="card-def" id="fc-def"></div>
+      </div>
+    </div>
+  </div>
+  <div class="fc-nav">
+    <button class="btn-nav" id="fc-prev" onclick="fcNav(-1)" disabled>◀ Poprzednia</button>
+    <button class="btn-quiz-start" onclick="startQuiz()">🎯 Przejdź do quizu</button>
+    <button class="btn-nav" id="fc-next" onclick="fcNav(1)">Następna ▶</button>
+  </div>
+</div>
+
+<!-- QUIZ -->
+<div id="quiz-screen" class="screen">
+  <div class="quiz-status">
+    <div class="status-item"><span class="status-label">Pytanie</span><span class="status-val" id="q-num-display">1/20</span></div>
+    <div class="status-item"><span class="status-label">Wynik</span><span class="status-val" id="score-display">0</span></div>
+    <div class="status-item"><span class="status-label">Seria</span><span class="status-val streak-display" id="streak-display">0</span></div>
+    <div class="status-item"><span class="status-label">Życia</span><span class="status-val" id="lives-display">❤️❤️❤️</span></div>
+  </div>
+  <div class="timer-bar-wrap"><div class="timer-bar" id="timer-bar"></div></div>
+  <div class="question-card">
+    <div class="q-type" id="q-type-lbl"></div>
+    <div class="q-num" id="q-num-lbl"></div>
+    <div class="q-text" id="q-text"></div>
+  </div>
+  <div id="answers-area"></div>
+  <div class="feedback" id="feedback"></div>
+  <button class="btn-next" id="btn-next" onclick="nextQuestion()">Następne pytanie →</button>
+</div>
+
+<!-- RESULTS -->
+<div id="results-screen" class="screen">
+  <div class="result-icon" id="result-icon">🏆</div>
+  <div class="result-grade" id="result-grade"></div>
+  <div class="result-sub" id="result-sub"></div>
+  <div class="result-stats">
+    <div class="stat-box"><div class="stat-num" id="r-score"></div><div class="stat-lbl">Punkty</div></div>
+    <div class="stat-box"><div class="stat-num" id="r-correct"></div><div class="stat-lbl">Poprawne</div></div>
+    <div class="stat-box"><div class="stat-num" id="r-streak"></div><div class="stat-lbl">Max seria</div></div>
+  </div>
+  <div class="compare-box" id="compare-box"></div>
+  <div class="result-btns">
+    <button class="btn-primary" onclick="startQuiz()">🔄 Zagraj ponownie</button>
+    <button class="btn-secondary" onclick="showLeaderboard()">🏆 Tabela wyników</button>
+    <button class="btn-secondary" onclick="showScreen('welcome-screen')">🏠 Menu</button>
+  </div>
+</div>
+
+<!-- LEADERBOARD -->
+<div id="lb-screen" class="screen">
+  <div class="lb-header">
+    <h2>🏆 Tabela wyników</h2>
+    <div style="display:flex;gap:10px;">
+      <button class="btn-clear" onclick="clearScores()">🗑 Wyczyść</button>
+      <button class="btn-back" onclick="showScreen('welcome-screen')">← Powrót</button>
+    </div>
+  </div>
+  <div id="lb-content"></div>
+</div>
+
+<script>
+const CARDS = [
+  { term: 'Barok — nazwa epoki', def: 'Od portugalskiego barocco — perła o nieregularnym kształcie: rzadka, dziwna, a więc pożądana. Początkowo termin pejoratywny (sztuka dziwaczna, przeładowana); neutralnego znaczenia nabrał w XIX w.' },
+  { term: 'Ramy czasowe epoki', def: 'Włochy: od końca XVI w. Europa: cały XVII w. i I połowa XVIII w. Polska: od przełomu XVI/XVII w. (umownie 1601 — Rytmy abo Wiersze polskie) do połowy XVIII w.' },
+  { term: 'Kontrreformacja', def: 'Ruch w Kościele katolickim: reforma wewnętrzna Kościoła oraz walka z niekatolikami i dominacja religijna i polityczna. Program: uchwały soboru trydenckiego (1545–1563). W Polsce od 1564 r.; ogromna rola jezuitów.' },
+  { term: 'Sobór trydencki', def: 'Obradował w latach 1545–1563. Jego uchwały stały się programem kontrreformacji. W Polsce przyjęto je w 1564 r.' },
+  { term: 'Antynomia', def: 'Przeciwieństwo; kategorie lub pojęcia, których znaczenia pozostają w opozycji: śmierć – życie, niebo – ziemia, wojna – pokój, świętość – grzech. Antynomie myśli barokowej to sprzeczności ujawniające się w filozofii epoki.' },
+  { term: 'Racjonalizm', def: 'Pogląd, zgodnie z którym najważniejszym narzędziem poznania jest rozum, a zmysłowe doświadczenie nas łudzi. Wiek XVII to w filozofii europejskiej okres racjonalizmu. Główny przedstawiciel: Kartezjusz.' },
+  { term: 'Panteizm', def: 'Pogląd utożsamiający Boga z naturą i wszechświatem — Bóg przenika całą rzeczywistość i jest z nią tożsamy. Przedstawiciele: Baruch Spinoza (Deus sive Natura) i Giordano Bruno.' },
+  { term: 'Sceptycyzm', def: 'Postawa wyrażająca wątpienie w powszechnie przyjęte prawdy i autorytety oraz przeświadczenie o ich względności. Narodził się w antyku, wskrzesił go Michel de Montaigne w dziele Próby.' },
+  { term: 'Naturalizm', def: 'Pogląd, że wszystko, co istnieje, należy do natury i daje się wyjaśnić prawami przyrody, bez sił nadprzyrodzonych. Człowiek jest częścią natury. Przeciwieństwo spirytualizmu.' },
+  { term: 'Spirytualizm', def: 'Pogląd uznający prymat ducha (duszy) nad materią — rzeczywistość duchowa jest pierwotna i ważniejsza od materialnej. Przeciwieństwo naturalizmu.' },
+  { term: 'Dualizm', def: 'Pogląd uznający dwoistą naturę rzeczywistości, a zwłaszcza człowieka: dusza i ciało, idee i materia. Popularny w XVII w., głosił go m.in. Kartezjusz.' },
+  { term: 'Blaise Pascal', def: '1623–1662. Autor Myśli (wyd. pośmiertnie 1669). Człowiek to „trzcina myśląca” — najwątlejsza w przyrodzie, ale myśląca. Wielkość człowieka w mocy rozumu, słabość — w nietrwałości i śmiertelności.' },
+  { term: 'Kartezjusz', def: 'René Descartes (1596–1650), twórca nowożytnego racjonalizmu. „Myślę, więc jestem” (cogito ergo sum). Punkt wyjścia: sceptycyzm metodyczny. Głosił dualizm duszy i ciała.' },
+  { term: 'Baruch Spinoza', def: '1632–1677, filozof holenderski, przedstawiciel panteizmu. Formuła Deus sive Natura — „Bóg, czyli Natura”. Autor Etyki.' },
+  { term: 'Michel de Montaigne', def: '1533–1592, francuski filozof i eseista, autor Prób. W drugiej połowie XVI w. wskrzesił sceptycyzm — wątpienie w przyjęte prawdy i autorytety.' },
+  { term: 'Giordano Bruno', def: '1548–1600, włoski filozof, panteista. Głosił nieskończoność wszechświata i tożsamość Boga z naturą; twierdził, że „piękno jest wielorakie”. Spalony na stosie w 1600 r.' },
+  { term: 'Vanitas', def: 'Łac. „marność”. Pojęcie z biblijnej Księgi Koheleta; oznacza znikomość i bezwartościowość rzeczy i spraw ludzkich. Formuła vanitas vanitatum — „marność nad marnościami”.' },
+  { term: 'Memento mori', def: 'Łac. „pamiętaj o śmierci”. Motyw przejęty ze średniowiecza; w sztuce reprezentują go czaszki, klepsydry, zegary, gasnące świece i zwiędłe kwiaty.' },
+  { term: 'Zegary i klepsydry', def: 'Symbole vanitas przypominające o nieuchronnym upływie czasu. W baroku wytwarzano już zegarki osobiste mierzące sekundy — stąd epokę nazywa się niekiedy „stuleciem zegarów”.' },
+  { term: 'Labirynt', def: 'Symbol baroku: życie człowieka jako trudne pielgrzymowanie prowadzące do zbawienia. Ukazywano człowieka w stroju pielgrzyma szukającego drogi w labiryncie świata.' },
+  { term: 'Kohelet', def: 'Mędrzec, twórca jednej z ksiąg Starego Testamentu. Słowa „marność nad marnościami i wszystko marność” można uznać za główną maksymę barokowej refleksji egzystencjalnej.' },
+  { term: 'Kirke', def: 'Czarodziejka znana z Odysei Homera — w baroku patronka ulubionej w sztuce epoki przemiany (metamorfozy), a także siły uwodzenia.' },
+  { term: 'Paw', def: 'Symbol wspaniałości i splendoru świata ziemskiego oraz fascynacji tym, co zmysłowe. Zarazem symbol pychy i złudności piękna.' },
+  { term: 'Światłocień', def: 'W malarstwie barokowym światło i mrok nabierają znaczeń symbolicznych: światło ma często mistyczne źródło, ciemność oznacza władzę zła.' },
+  { term: 'Uroboros', def: 'Wąż pożerający własny ogon — symbol cykliczności czasu.' },
+  { term: 'Caravaggio', def: 'Właśc. Michelangelo Merisi (1573–1610). Jeden z pierwszych realistów; świętym nadawał rysy prostych ludzi. Jako pierwszy stosował ostry światłocień. Uformował barokowy kanon piękna.' },
+  { term: 'Peter Paul Rubens', def: '1577–1640. Ok. 2000 płócien. Bogata paleta barw, dynamizm i zmysłowość. Stworzył kanon urody: kobiety o obfitych kształtach — stąd „rubensowskie kształty”. Obraz Trzy Gracje.' },
+  { term: 'Gianlorenzo Bernini', def: '1598–1680. Dynamizm, patos i złożona symbolika (Fontanna Trytona, Ekstaza świętej Teresy). Kolumnada na placu św. Piotra. Kompozycja spiralna stała się symbolem sztuki baroku.' },
+  { term: 'Diego Velázquez', def: '1599–1660, hiszpański malarz dworu królewskiego w Madrycie. Mistrz malarstwa rodzajowego i historycznego, zamiłowany w ukrytych treściach psychologicznych. Las Meninas (Panny dworskie), 1656.' },
+  { term: 'Nurt metafizyczny', def: 'Liryka religijna przełomu XVI i XVII w. Autorzy odrzucali renesansowy stoicyzm, nie ufali ideom cnoty i umiaru, na nowo pytali o sens istnienia, a odpowiedzi szukali w religii. Główny przedstawiciel: Mikołaj Sęp-Szarzyński.' },
+  { term: 'Nurt dworski', def: 'Nurt literatury baroku otwarty na nowinki z zachodniej Europy, podejmujący modne tam rozwiązania formalne i nawiązujący do twórców włoskich i francuskich. Przedstawiciele: Jan Andrzej Morsztyn, Daniel Naborowski.' },
+  { term: 'Nurt sarmacki (ziemiański)', def: 'Nurt związany z życiem i mentalnością szlachty: wieś, wojny, obyczaje, cnoty i wady szlacheckie. Forma gawędziarska, makaronizmy. Gatunki: pamiętnik, gawęda, epos, satyra. Przedstawiciele: Pasek, Potocki.' },
+  { term: 'Mikołaj Sęp-Szarzyński', def: 'Ok. 1550–1581. Studiował w Wittenberdze i Lipsku, gospodarował pod Lwowem i Przemyślem. Pionier poezji metafizycznej i prekursor baroku w literaturze polskiej. Tematyka egzystencjalna i religijna, a także erotyki.' },
+  { term: 'Rytmy abo Wiersze polskie', def: 'Jedyny tomik Sępa-Szarzyńskiego, ok. pięćdziesięciu utworów. Poeta nie publikował za życia — wiersze ukazały się dwadzieścia lat po jego śmierci, w 1601 r. Data symbolicznie otwiera nową epokę w polskiej kulturze.' },
+  { term: 'Homo militans', def: 'Łac. „człowiek walczący”. Koncepcja przeciwstawiona renesansowemu stoicyzmowi: powołaniem człowieka jest heroiczna walka ze słabościami i grzechem o zbawienie duszy; życie utożsamiano z walką, człowieka — z rycerzem chrześcijańskim.' },
+  { term: 'Sonet IV Sępa-Szarzyńskiego', def: 'O wojnie naszej, którą wiedziemy z szatanem, światem i ciałem. Życie to wojna z trzema wrogami. Człowiek „wątły, niebaczny, rozdwojony w sobie” — ratunkiem jest Bóg. Pierwszy wers parafrazuje Księgę Hioba.' },
+  { term: 'Sonet V Sępa-Szarzyńskiego', def: 'O nietrwałej miłości rzeczy świata tego. Paradoks: „I nie miłować ciężko, i miłować / Nędzna pociecha”. Dobra materialne przemijają; prawdziwym celem miłości jest Bóg — „wieczna i prawa piękność”.' },
+  { term: 'Sonet', def: 'Gatunek liryczny o ściśle określonej budowie: 14 wersów w układzie 4 + 4 + 3 + 3. Oktawa (pierwsze 8 wersów) ma charakter opisowy, sekstyna (ostatnie 6) — refleksyjno-filozoficzny, zakończony puentą.' },
+  { term: 'Daniel Naborowski', def: '1573–1640, prawdopodobnie najbardziej wykształcony poeta polskiego baroku. Dwanaście lat podróży edukacyjnych; w Padwie słuchał wykładów Galileusza. Dworzanin Radziwiłłów, kalwinista. Nurt dworski.' },
+  { term: 'Krótkość żywota', def: 'Wiersz Naborowskiego o nieuchwytności czasu. Słynne wyliczenie: „Dźwięk, cień, dym, wiatr, błysk, głos, punkt — żywot ludzki słynie”. Ludzki byt to „czwarta część mgnienia”. Dopełnienie stanowi utwór Na toż.' },
+  { term: 'Na oczy królewny angielskiej…', def: 'Panegiryk Naborowskiego na cześć Elżbiety Stuart, „królowej serc” (ok. 1619). Zbudowany na łańcuchu negacji i antytez, zakończony konceptem: wszystko zamyka się „w jednym oka słowie”.' },
+  { term: 'Panegiryk', def: 'Utwór pochwalny poświęcony konkretnej osobie, opiewający ważne dla niej wydarzenia. Jako utwór okolicznościowy odgrywał ważną rolę, gdy nie było jeszcze prasy — upowszechniał poglądy mecenasa i kreował jego wizerunek.' },
+  { term: 'Koncept', def: 'Niezwykły pomysł poetycki oparty na grze skojarzeń i zestawieniu odległych pojęć. Ukazuje analogie między zjawiskami, które na pozór nie mają ze sobą nic wspólnego. Definiował go Maciej Kazimierz Sarbiewski.' },
+  { term: 'Marinizm', def: 'Styl poetycki od nazwiska Giambattisty Marina: kunsztowność formy, przepych środków, zaskakujące metafory, kult konceptu. Naczelna zasada: celem poety jest zadziwienie odbiorcy.' },
+  { term: 'Sarmatyzm', def: 'Ideologia i styl życia szlachty polskiej oparte na przekonaniu, że szlachta wywodzi się od starożytnych Sarmatów — walecznego ludu ceniącego wolność i demokrację. Podstawa: wyjątkowa rola państwa polsko-litewskiego jako ostoi „złotej wolności”.' },
+  { term: 'Sarmacki mesjanizm', def: 'Ideologia uznająca XVII-wiecznych Sarmatów za naród wybrany przez Boga. Misją Rzeczypospolitej miała być obrona chrześcijańskiej Europy przed imperium osmańskim — stąd „przedmurze chrześcijaństwa”.' },
+  { term: 'Cechy Sarmaty', def: 'Megalomania (przeświadczenie o własnej wielkości), ksenofobia (wrogość wobec obcych), konserwatyzm, gorliwa religijność, umiłowanie „złotej wolności”, waleczność, gościnność, warcholstwo i makaronizowanie.' },
+  { term: 'Jan Chryzostom Pasek', def: 'Ok. 1636–1701, z drobnej szlachty. Kolegium jezuickie w Rawie Mazowieckiej. Jedenaście lat służby pod Stefanem Czarnieckim, wojny ze Szwecją i Moskwą. Od 1667 r. ziemianin — pieniacz urządzający zajazdy.' },
+  { term: 'Pamiętniki Paska', def: 'Wyraz idei sarmatyzmu, pisane ok. 1691–1695. Pozostały w rękopisie i ukazały się dopiero w 1836 r. Przyniosły autorowi miano „księcia pamiętnikarzy staropolskich”.' },
+  { term: 'Pamiętnik (gatunek)', def: 'Utwór epicki pisany najczęściej prozą. Autor opisuje zdarzenia, których był uczestnikiem lub świadkiem, relacjonując je chronologicznie, ale z dystansu czasowego — w odróżnieniu od dziennika pisanego na bieżąco.' },
+  { term: 'Peryfraza', def: 'Omówienie — zastąpienie nazwy rzeczy lub osoby opisem. Przykłady: „srogi ciemności hetman” zamiast szatan, „wieczna i prawa piękność” zamiast Bóg.' },
+  { term: 'Parafraza', def: 'Swobodna przeróbka cudzego tekstu zachowująca jego sens, ale zmieniająca formę. Pierwszy wers Sonetu IV to parafraza wersetu z Księgi Hioba. Nie mylić z peryfrazą!' },
+  { term: 'Antyteza', def: 'Zestawienie dwóch przeciwstawnych znaczeniowo części wypowiedzi, zwykle o podobnej budowie składniowej: „I nie miłować ciężko, i miłować / Nędzna pociecha”.' },
+  { term: 'Oksymoron', def: 'Zestawienie dwóch wyrazów o sprzecznych, wykluczających się znaczeniach, najczęściej rzeczownika z epitetem: „żywy trup”, „ciemne światło”, „gorzka słodycz”.' },
+  { term: 'Inwersja', def: 'Szyk przestawny wyrazów — nienaturalna kolejność słów będąca sygnałem mowy uroczystej, podniosłej. Jedna z cech charakterystycznych stylu biblijnego.' },
+  { term: 'Elipsa', def: 'Celowe pominięcie w zdaniu jakiegoś składnika, często orzeczenia. Powoduje kondensację wypowiedzi i aktywizuje odbiorcę, który musi odczytać brakujące znaczenia z kontekstu.' },
+  { term: 'Antropomorfizacja', def: 'Typ metafory: nadawanie elementom świata pozaludzkiego cech charakterystycznych tylko dla człowieka — zdolności myślenia, odczuwania. W odróżnieniu od personifikacji nie odwołuje się do całości ludzkiej osoby.' },
+  { term: 'Makaronizm', def: 'Wtrącanie do wypowiedzi po polsku wyrazów i zwrotów obcych, zwłaszcza łacińskich. Cecha języka Sarmatów i stylu Pamiętników Paska.' },
+  { term: 'Wojna trzydziestoletnia', def: 'Wielki konflikt międzynarodowy 1618–1648. Rzeczpospolita formalnie w nim nie uczestniczyła, choć udzielała pomocy austriackim Habsburgom.' },
+];
+
+const QUESTIONS = [
+  { type:'def', q:'Od jakiego słowa pochodzi <span class="q-term">nazwa epoki</span> i co ono oznacza?', a:'Od portugalskiego barocco — perła o nieregularnym kształcie', wrong:['Od włoskiego barocco — przepych i przesada','Od francuskiego baroque — dziwaczność stylu','Od łacińskiego baroculum — ozdoba ołtarza'] },
+  { type:'def', q:'Czym była <span class="q-term">kontrreformacja</span>?', a:'Ruch reformy wewnętrznej Kościoła katolickiego i walki z niekatolikami', wrong:['Ruch dążący do pojednania katolików z protestantami','Reforma szkolnictwa zainicjowana przez jezuitów','Powrót do liturgii sprzed soboru trydenckiego'] },
+  { type:'def', q:'Na czym polega <span class="q-term">panteizm</span>?', a:'Na utożsamieniu Boga z naturą i wszechświatem', wrong:['Na uznaniu prymatu ducha nad materią','Na wątpieniu w powszechnie przyjęte prawdy','Na wyjaśnianiu świata wyłącznie prawami przyrody'] },
+  { type:'def', q:'Czym jest <span class="q-term">spirytualizm</span>?', a:'Poglądem uznającym prymat ducha (duszy) nad materią', wrong:['Poglądem, że wszystko daje się wyjaśnić prawami natury','Utożsamieniem Boga z przyrodą','Przekonaniem, że rozum jest jedynym narzędziem poznania'] },
+  { type:'def', q:'Czym jest <span class="q-term">sceptycyzm</span>?', a:'Postawą wątpienia w powszechnie przyjęte prawdy i autorytety', wrong:['Przekonaniem o nieskończoności wszechświata','Poglądem o dwoistej naturze człowieka','Wiarą w możliwość uzyskania wiedzy pewnej'] },
+  { type:'def', q:'Co to jest <span class="q-term">peryfraza</span>?', a:'Zastąpienie nazwy rzeczy lub osoby opisem, omówieniem', wrong:['Swobodna przeróbka cudzego tekstu','Zestawienie wyrazów o sprzecznych znaczeniach','Przestawny, nienaturalny szyk wyrazów'] },
+  { type:'def', q:'Co to jest <span class="q-term">parafraza</span>?', a:'Swobodna przeróbka cudzego tekstu zachowująca jego sens', wrong:['Zastąpienie nazwy opisem jej cech','Celowe pominięcie orzeczenia w zdaniu','Zestawienie dwóch przeciwstawnych części wypowiedzi'] },
+  { type:'def', q:'Co to jest <span class="q-term">oksymoron</span>?', a:'Zestawienie dwóch wyrazów o sprzecznych, wykluczających się znaczeniach', wrong:['Zestawienie dwóch przeciwstawnych części wypowiedzi o podobnej składni','Omówienie zamiast nazwy własnej','Przeniesienie części zdania do następnego wersu'] },
+  { type:'def', q:'Czym jest <span class="q-term">koncept</span> w poezji barokowej?', a:'Niezwykłym pomysłem poetyckim opartym na zestawieniu odległych pojęć', wrong:['Streszczeniem myśli przewodniej utworu','Regularnym układem rymów w sonecie','Wstępem do panegiryku zawierającym dedykację'] },
+  { type:'def', q:'Czym jest <span class="q-term">vanitas</span>?', a:'Pojęciem z Księgi Koheleta oznaczającym marność rzeczy i spraw ludzkich', wrong:['Łacińską nazwą sonetu o tematyce religijnej','Symbolem próżności przedstawianym jako paw','Nurtem filozoficznym głoszącym rozkosz życia'] },
+  { type:'def', q:'Kim jest <span class="q-term">homo militans</span>?', a:'Człowiekiem walczącym — toczącym bój z grzechem o zbawienie duszy', wrong:['Człowiekiem wędrowcem pielgrzymującym przez świat','Rycerzem walczącym w obronie ojczyzny','Uczonym walczącym z zabobonami swojej epoki'] },
+  { type:'def', q:'Co oznacza <span class="q-term">sarmacki mesjanizm</span>?', a:'Uznanie Sarmatów za naród wybrany przez Boga', wrong:['Przekonanie o pochodzeniu szlachty od Rzymian','Wiarę w nadejście króla, który odnowi Rzeczpospolitą','Ideę zjednoczenia całej słowiańszczyzny pod polskim berłem'] },
+  { type:'fact', q:'W którym roku ukazały się <em>Rytmy abo Wiersze polskie</em> — data umownie otwierająca barok w Polsce?', a:'1601', wrong:['1581','1620','1669'] },
+  { type:'fact', q:'Jak zbudowany jest <span class="q-term">sonet</span>?', a:'14 wersów w układzie 4 + 4 + 3 + 3', wrong:['12 wersów w układzie 3 + 3 + 3 + 3','14 wersów w układzie 3 + 3 + 4 + 4','16 wersów w czterech strofach czterowersowych'] },
+  { type:'fact', q:'Kto nazwał człowieka <span class="q-term">„trzciną myślącą”</span>?', a:'Blaise Pascal', wrong:['Kartezjusz','Baruch Spinoza','Michel de Montaigne'] },
+  { type:'fact', q:'Do którego nurtu literatury polskiego baroku należy <span class="q-term">Mikołaj Sęp-Szarzyński</span>?', a:'Do nurtu metafizycznego', wrong:['Do nurtu dworskiego','Do nurtu sarmackiego','Do nurtu ziemiańskiego'] },
+  { type:'fact', q:'Do którego nurtu należy twórczość <span class="q-term">Daniela Naborowskiego</span>?', a:'Do nurtu dworskiego', wrong:['Do nurtu metafizycznego','Do nurtu sarmackiego','Do nurtu mieszczańskiego'] },
+  { type:'fact', q:'W którym roku wydano <em>Pamiętniki</em> Jana Chryzostoma Paska?', a:'1836', wrong:['1695','1701','1764'] },
+  { type:'tf', q:'<strong>Prawda czy fałsz:</strong> barokowy światopogląd nawiązuje przede wszystkim do średniowiecza — wraca w nim teocentryzm, motyw vanitas i memento mori.', a:true, exp:'PRAWDA. Barok odrzuca renesansowy optymizm i antropocentryzm, a wraca do średniowiecznego teocentryzmu, motywu vanitas, memento mori, ascetyzmu i dualizmu duszy i ciała.' },
+  { type:'tf', q:'<strong>Prawda czy fałsz:</strong> pierwszy wers <em>Sonetu IV</em> Sępa-Szarzyńskiego jest peryfrazą wersetu z Księgi Hioba.', a:false, exp:'FAŁSZ. To PARAFRAZA — swobodna przeróbka cudzego tekstu („Bojowaniem jest żywot człowieczy na ziemi”). Peryfraza to omówienie, czyli zastąpienie nazwy opisem, np. „srogi ciemności hetman” zamiast „szatan”.' },
+];
+
+// ===== STATE =====
+let fcIndex = 0, fcFlipped = false;
+let qList = [], qIndex = 0, score = 0, lives = 3, streak = 0, bestStreak = 0, correct = 0;
+let timerInterval = null, timeLeft = 15, answered = false;
+const LS_KEY = 'barok_quest_scores';
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function saveScore(e) {
+  const s = loadScores(); s.unshift(e);
+  localStorage.setItem(LS_KEY, JSON.stringify(s.slice(0, 50)));
+}
+
+function loadScores() {
+  try { return JSON.parse(localStorage.getItem(LS_KEY) || '[]'); } catch { return []; }
+}
+
+function clearScores() {
+  if (confirm('Na pewno wyczyścić historię wyników?')) {
+    localStorage.removeItem(LS_KEY); renderLeaderboard();
+  }
+}
+
+function gradeInfo(pct) {
+  if (pct >= 90) return { lbl: 'Mistrz konceptu!', cls: '#f3c07a', emoji: '🪶' };
+  if (pct >= 75) return { lbl: 'Poeta dworski', cls: '#aed581', emoji: '🎭' };
+  if (pct >= 60) return { lbl: 'Żak', cls: '#e08a3c', emoji: '📜' };
+  if (pct >= 40) return { lbl: 'Terminator', cls: '#ffb74d', emoji: '🕯️' };
+  return { lbl: 'Początkujący', cls: '#ef9a9a', emoji: '⏳' };
+}
+
+// FLASHCARDS
+function startFlashcards() {
+  fcIndex = 0; fcFlipped = false; updateCard();
+  showScreen('fc-screen');
+}
+
+function updateCard() {
+  const c = CARDS[fcIndex];
+  document.getElementById('fc-term').textContent = c.term;
+  document.getElementById('fc-def').textContent = c.def;
+  document.getElementById('fc-counter').textContent = `${fcIndex + 1} / ${CARDS.length}`;
+  document.getElementById('fc-bar').style.width = `${((fcIndex + 1) / CARDS.length) * 100}%`;
+  document.getElementById('fc-prev').disabled = fcIndex === 0;
+  document.getElementById('fc-next').disabled = fcIndex === CARDS.length - 1;
+  document.getElementById('card-3d').classList.remove('flipped'); fcFlipped = false;
+}
+
+function flipCard() {
+  fcFlipped = !fcFlipped;
+  document.getElementById('card-3d').classList.toggle('flipped', fcFlipped);
+}
+
+function fcNav(dir) {
+  fcIndex = Math.max(0, Math.min(CARDS.length - 1, fcIndex + dir)); updateCard();
+}
+
+// QUIZ
+function startQuiz() {
+  qList = shuffle(QUESTIONS).slice(0, 20);
+  qIndex = 0; score = 0; lives = 3; streak = 0; bestStreak = 0; correct = 0; answered = false;
+  showScreen('quiz-screen'); renderQuestion();
+}
+
+function renderQuestion() {
+  if (qIndex >= qList.length || lives <= 0) { endGame(); return; }
+  answered = false;
+  const q = qList[qIndex];
+  document.getElementById('q-num-display').textContent = `${qIndex + 1}/20`;
+  document.getElementById('score-display').textContent = score;
+  document.getElementById('streak-display').textContent = streak + (streak >= 3 ? ' 🔥' : '');
+  document.getElementById('lives-display').textContent = '❤️'.repeat(lives) + '🖤'.repeat(3 - lives);
+  const typeLbls = { def: '📜 Definicja → Pojęcie', fact: '🪶 Fakt z epoki', tf: '✅ Prawda / Fałsz' };
+  document.getElementById('q-type-lbl').textContent = typeLbls[q.type] || '';
+  document.getElementById('q-num-lbl').textContent = `Pytanie ${qIndex + 1} z ${qList.length}`;
+  document.getElementById('q-text').innerHTML = q.q;
+  document.getElementById('feedback').className = 'feedback';
+  document.getElementById('btn-next').className = 'btn-next';
+  const area = document.getElementById('answers-area');
+  if (q.type === 'tf') {
+    area.innerHTML = `<div class="tf-row">
+      <button class="tf-btn true-btn" onclick="answerTF(true)">✅ Prawda</button>
+      <button class="tf-btn false-btn" onclick="answerTF(false)">❌ Fałsz</button>
+    </div>`;
+  } else {
+    const opts = shuffle([q.a, ...q.wrong]);
+    area.innerHTML = `<div class="answers-grid">${opts.map(o =>
+      `<button class="answer-btn" onclick="answerMC(this,'${o.replace(/'/g,"\\'")}','${q.a.replace(/'/g,"\\'")}')">` + o + '</button>'
+    ).join('')}</div>`;
+  }
+  startTimer();
+}
+
+function startTimer() {
+  clearInterval(timerInterval); timeLeft = 15; updateTimerBar();
+  timerInterval = setInterval(() => {
+    timeLeft--; updateTimerBar();
+    if (timeLeft <= 0) { clearInterval(timerInterval); timeUp(); }
+  }, 1000);
+}
+
+function updateTimerBar() {
+  const bar = document.getElementById('timer-bar');
+  const pct = (timeLeft / 15) * 100;
+  bar.style.width = pct + '%';
+  bar.style.background = pct > 60 ? '#5d9b5d' : pct > 30 ? '#e8a000' : '#c0392b';
+}
+
+function timeUp() {
+  if (answered) return;
+  answered = true; lives--; streak = 0;
+  showFeedback(false, '⏰ Czas minął!');
+  document.querySelectorAll('.answer-btn,.tf-btn').forEach(b => b.classList.add('answered'));
+  document.getElementById('btn-next').className = 'btn-next show';
+  document.getElementById('lives-display').textContent = '❤️'.repeat(lives) + '🖤'.repeat(3 - lives);
+  if (lives <= 0) setTimeout(endGame, 1400);
+}
+
+function answerMC(btn, chosen, correct_ans) {
+  if (answered) return;
+  clearInterval(timerInterval); answered = true;
+  const isOk = chosen === correct_ans;
+  document.querySelectorAll('.answer-btn').forEach(b => {
+    b.classList.add('answered');
+    if (b.textContent.trim() === correct_ans) b.classList.add('correct');
+    else if (b === btn && !isOk) b.classList.add('wrong');
+  });
+  processAnswer(isOk, '');
+}
+
+function answerTF(val) {
+  if (answered) return;
+  clearInterval(timerInterval); answered = true;
+  const q = qList[qIndex]; const isOk = val === q.a;
+  document.querySelectorAll('.tf-btn').forEach(b => {
+    b.classList.add('answered');
+    const bVal = b.classList.contains('true-btn');
+    if (bVal === q.a) b.classList.add('correct');
+    if (bVal === val && !isOk) b.classList.add('wrong');
+  });
+  processAnswer(isOk, q.exp || '');
+}
+
+function processAnswer(isOk, extra) {
+  if (isOk) {
+    correct++; streak++;
+    if (streak > bestStreak) bestStreak = streak;
+    let pts = 100;
+    if (streak >= 3) pts += (streak - 2) * 25;
+    score += pts;
+    const sm = streak >= 3 ? ` 🔥 Seria ${streak}! +${(streak-2)*25} bonus` : '';
+    showFeedback(true, `✅ Dobrze! +${pts} pkt${sm}`);
+  } else {
+    lives--; streak = 0;
+    const q = qList[qIndex];
+    showFeedback(false, `❌ Błąd. ${extra || 'Poprawna odpowiedź: ' + q.a}`);
+    document.getElementById('lives-display').textContent = '❤️'.repeat(lives) + '🖤'.repeat(3 - lives);
+  }
+  document.getElementById('score-display').textContent = score;
+  document.getElementById('streak-display').textContent = streak + (streak >= 3 ? ' 🔥' : '');
+  document.getElementById('btn-next').className = 'btn-next show';
+  if (lives <= 0 && qIndex < qList.length - 1)
+    document.getElementById('btn-next').textContent = 'Zakończ grę →';
+}
+
+function showFeedback(ok, msg) {
+  const el = document.getElementById('feedback');
+  el.className = 'feedback show ' + (ok ? 'ok' : 'fail');
+  el.textContent = msg;
+}
+
+function nextQuestion() {
+  qIndex++;
+  if (qIndex >= qList.length || lives <= 0) { endGame(); return; }
+  renderQuestion();
+}
+
+function endGame() {
+  clearInterval(timerInterval);
+  const total = qList.length, pct = Math.round((correct / total) * 100);
+  const g = gradeInfo(pct);
+  const entry = { score, correct, total, bestStreak, date: new Date().toLocaleDateString('pl-PL') };
+  saveScore(entry);
+  const scores = loadScores(), prev = scores[1];
+  let compareHtml = prev
+    ? `Poprzedni wynik: <strong>${prev.score} pkt</strong> | Zmiana: <strong>${score - prev.score > 0 ? '+' : ''}${score - prev.score} pkt</strong> ${score > prev.score ? '📈' : score < prev.score ? '📉' : '➡️'}`
+    : '🎉 To Twój <strong>pierwszy wynik!</strong> Zagraj ponownie, by pobić rekord.';
+  document.getElementById('result-icon').textContent = g.emoji;
+  document.getElementById('result-grade').innerHTML = `<span style="color:${g.cls}">${g.lbl}</span>`;
+  document.getElementById('result-sub').textContent = `${pct}% poprawnych odpowiedzi`;
+  document.getElementById('r-score').textContent = score;
+  document.getElementById('r-correct').textContent = `${correct}/${total}`;
+  document.getElementById('r-streak').textContent = bestStreak;
+  document.getElementById('compare-box').innerHTML = compareHtml;
+  const best = Math.max(...loadScores().map(s => s.score));
+  if (score >= best && loadScores().length > 1)
+    document.getElementById('result-grade').innerHTML += '<span class="record-badge">🏆 REKORD!</span>';
+  showScreen('results-screen');
+}
+
+function showLeaderboard() { renderLeaderboard(); showScreen('lb-screen'); }
+
+function renderLeaderboard() {
+  const scores = loadScores(), el = document.getElementById('lb-content');
+  if (!scores.length) { el.innerHTML = '<div class="lb-empty">Brak wyników. Zagraj, by zobaczyć swoje osiągnięcia!</div>'; return; }
+  const best = Math.max(...scores.map(s => s.score));
+  const last10 = scores.slice(0, 10).reverse();
+  const maxBar = Math.max(...last10.map(s => s.score), 1);
+  const bars = last10.map(s => {
+    const h = Math.max(8, Math.round((s.score / maxBar) * 110));
+    return `<div class="chart-bar-wrap"><div class="chart-bar" style="height:${h}px" title="${s.score} pkt"></div><div class="chart-lbl">${s.score}</div></div>`;
+  }).join('');
+  let rows = '';
+  scores.slice(0, 20).forEach((s, i) => {
+    const prev = scores[i + 1];
+    let trend = '<span class="trend-eq">➡️</span>';
+    if (prev) { if (s.score > prev.score) trend = '<span class="trend-up">📈</span>'; else if (s.score < prev.score) trend = '<span class="trend-down">📉</span>'; }
+    const isRec = s.score >= best;
+    const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `${i + 1}.`;
+    rows += `<tr ${isRec ? 'class="record-row"' : ''}><td>${medal}</td><td>${s.score} pkt${isRec && i === 0 ? ' <span class="record-badge">REKORD</span>' : ''}</td><td>${s.correct}/${s.total}</td><td>${s.bestStreak}</td><td>${s.date}</td><td>${trend}</td></tr>`;
+  });
+  el.innerHTML = `
+    <div class="lb-chart-wrap">
+      <div class="lb-chart-title">Ostatnie ${last10.length} gier</div>
+      <div class="chart-bars">${bars}</div>
+    </div>
+    <table class="lb-table">
+      <thead><tr><th>#</th><th>Wynik</th><th>Poprawne</th><th>Max seria</th><th>Data</th><th>Trend</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+}
+
+updateCard();
+</script>
+</body>
+</html>

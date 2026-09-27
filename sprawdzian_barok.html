@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#f3f0ea">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Barok">
+<meta name="format-detection" content="telephone=no">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-180.png">
+<title>Sprawdzian – Barok</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #f3f0ea; color: #222; padding: 24px 16px; }
+  .container { max-width: 860px; margin: 0 auto; }
+
+  .backlink { display: inline-block; margin-bottom: 14px; font-size: 0.85rem; color: #8c3b12; text-decoration: none; background: white; border: 1px solid #ddd; border-radius: 20px; padding: 6px 16px; }
+  .backlink:hover { border-color: #8c3b12; }
+
+  header { background: #5a2f14; color: white; border-radius: 12px; padding: 28px 32px; margin-bottom: 24px; }
+  header h1 { font-size: 1.45rem; font-weight: 700; margin-bottom: 6px; }
+  header p { font-size: 0.9rem; opacity: 0.85; }
+  .meta { display: flex; gap: 10px; margin-top: 14px; font-size: 0.85rem; flex-wrap: wrap; }
+  .meta span { background: rgba(255,255,255,0.16); padding: 4px 12px; border-radius: 20px; }
+
+  .task { background: white; border-radius: 12px; padding: 24px 28px; margin-bottom: 18px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+  .task-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
+  .task-title { font-weight: 700; font-size: 1rem; color: #8c3b12; }
+  .task-points { background: #faf0e2; color: #8c3b12; font-size: 0.8rem; font-weight: 700; padding: 4px 10px; border-radius: 20px; white-space: nowrap; margin-left: 12px; }
+  .task-instruction { font-size: 0.92rem; margin-bottom: 16px; color: #444; line-height: 1.5; }
+
+  .stmt-row { display: flex; align-items: flex-start; gap: 12px; padding: 10px 12px; border-radius: 8px; margin-bottom: 8px; border: 2px solid #e8e8e8; cursor: pointer; transition: all 0.15s; user-select: none; }
+  .stmt-row:hover { border-color: #e0b088; background: #fdf8f2; }
+  .stmt-row.selected { border-color: #8c3b12; background: #faf0e2; }
+  .stmt-row.correct { border-color: #27ae60; background: #eafaf1; }
+  .stmt-row.wrong { border-color: #e74c3c; background: #fdf0ef; }
+  .stmt-row.missed { border-color: #f0ad4e; background: #fff8e6; }
+  .stmt-label { font-weight: 700; color: #8c3b12; min-width: 20px; }
+  .stmt-text { font-size: 0.92rem; line-height: 1.5; }
+  .checkbox-indicator { width: 22px; height: 22px; min-width: 22px; border: 2px solid #ccc; border-radius: 5px; margin-top: 1px; display: flex; align-items: center; justify-content: center; font-size: 14px; transition: all 0.15s; }
+  .stmt-row.selected .checkbox-indicator { background: #8c3b12; border-color: #8c3b12; color: white; }
+  .stmt-row.correct .checkbox-indicator { background: #27ae60; border-color: #27ae60; color: white; }
+  .stmt-row.wrong .checkbox-indicator { background: #e74c3c; border-color: #e74c3c; color: white; }
+
+  .match-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; flex-wrap: wrap; }
+  .match-name { font-weight: 700; color: #8c3b12; min-width: 220px; font-size: 0.92rem; }
+  .match-name em { font-weight: 400; color: #666; display: block; font-size: 0.82rem; }
+  .match-select { flex: 1; min-width: 240px; padding: 9px 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 0.89rem; font-family: inherit; background: white; }
+  .match-select:focus { outline: none; border-color: #8c3b12; }
+  .match-select.correct { border-color: #27ae60; background: #eafaf1; }
+  .match-select.wrong { border-color: #e74c3c; background: #fdf0ef; }
+
+  .concept-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
+  .concept-letter { font-weight: 700; color: #8c3b12; min-width: 20px; }
+  .concept-input { width: 230px; padding: 8px 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 0.95rem; font-family: inherit; transition: border-color 0.15s; }
+  .concept-input:focus { outline: none; border-color: #8c3b12; }
+  .concept-input.correct { border-color: #27ae60; background: #eafaf1; }
+  .concept-input.wrong { border-color: #e74c3c; background: #fdf0ef; }
+  .concept-desc { font-size: 0.9rem; color: #555; flex: 1; min-width: 230px; }
+
+  .date-row { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+  .date-input { width: 100px; padding: 8px 10px; border: 2px solid #ddd; border-radius: 8px; font-size: 1rem; text-align: center; font-family: inherit; }
+  .date-input:focus { outline: none; border-color: #8c3b12; }
+  .date-input.correct { border-color: #27ae60; background: #eafaf1; }
+  .date-input.wrong { border-color: #e74c3c; background: #fdf0ef; }
+  .date-label { font-size: 0.92rem; line-height: 1.4; }
+
+  .words-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 10px; }
+  .word-chip { padding: 8px 18px; border: 2px solid #ccc; border-radius: 30px; cursor: pointer; font-size: 0.93rem; transition: all 0.15s; user-select: none; }
+  .word-chip:hover { border-color: #e0b088; background: #fdf8f2; }
+  .word-chip.crossed { text-decoration: line-through; background: #f8d7d3; border-color: #e74c3c; color: #c0392b; }
+  .word-chip.correct-cross { text-decoration: line-through; background: #d5f5e3; border-color: #27ae60; color: #1e8449; }
+  .word-chip.wrong-cross { text-decoration: line-through; background: #fdf0ef; border-color: #e74c3c; color: #c0392b; }
+  .word-chip.missed { background: #fff3cd; border-color: #f0ad4e; }
+
+  .quote { background: #fbfaf8; border-left: 3px solid #c85a1b; border-radius: 6px; padding: 10px 14px; font-family: Georgia, serif; font-size: 0.9rem; margin: 10px 0; line-height: 1.6; }
+
+  .open-area { width: 100%; min-height: 95px; padding: 10px 14px; border: 2px solid #ddd; border-radius: 8px; font-size: 0.92rem; font-family: inherit; resize: vertical; }
+  .open-area:focus { outline: none; border-color: #8c3b12; }
+
+  .model-answer { display: none; margin-top: 12px; background: #eafaf1; border: 1px solid #27ae60; border-radius: 8px; padding: 12px 16px; font-size: 0.9rem; line-height: 1.65; }
+  .model-answer strong { color: #1e8449; }
+
+  .btn { display: inline-block; padding: 10px 22px; border: none; border-radius: 8px; cursor: pointer; font-size: 0.9rem; font-weight: 600; transition: all 0.15s; margin-top: 14px; font-family: inherit; }
+  .btn-check { background: #8c3b12; color: white; }
+  .btn-check:hover { background: #6d2c0c; }
+  .btn-reveal { background: #f0eeea; color: #444; margin-left: 8px; }
+  .btn-reveal:hover { background: #e2ded8; }
+
+  .feedback { margin-top: 10px; font-size: 0.88rem; font-weight: 600; display: none; line-height: 1.5; }
+  .feedback.ok { color: #27ae60; }
+  .feedback.nok { color: #e74c3c; }
+
+  #scoreboard { background: #5a2f14; color: white; border-radius: 12px; padding: 28px 32px; margin-top: 24px; text-align: center; display: none; }
+  #scoreboard h2 { font-size: 1.3rem; margin-bottom: 10px; }
+  #score-number { font-size: 3rem; font-weight: 800; }
+  #score-label { font-size: 0.9rem; opacity: 0.8; margin-top: 4px; }
+  #score-grade { font-size: 1.1rem; margin-top: 14px; }
+  .score-grid { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 18px; }
+  .score-item { background: rgba(255,255,255,0.15); border-radius: 8px; padding: 8px 14px; font-size: 0.85rem; }
+
+  .submit-section { text-align: center; margin-top: 8px; }
+  .btn-submit { background: #c85a1b; color: white; padding: 14px 36px; font-size: 1rem; border-radius: 10px; border: none; cursor: pointer; font-weight: 700; font-family: inherit; }
+  .btn-submit:hover { background: #a84713; }
+
+  /* ——— iPad / Safari ——— */
+  html { -webkit-text-size-adjust: 100%; }
+  * { -webkit-tap-highlight-color: rgba(0,0,0,0); }
+  a, button, select, summary,
+  .stmt-row, .word-chip, .chron-row, .match-select,
+  .card, .mode-card, .answer-btn, .tf-btn, .card-scene, .chip, .alpha button
+  { touch-action: manipulation; }
+  /* Safari na iOS powiększa stronę, gdy pole ma czcionkę < 16px */
+  input, select, textarea { font-size: 16px; }
+  /* efekty hover tylko tam, gdzie kursor faktycznie istnieje */
+  @media (hover: none) {
+    .card:hover, .mode-card:hover, .dept:hover { transform: none; box-shadow: none; }
+  }
+  @supports (padding: max(0px)) {
+    body { padding-left: max(16px, env(safe-area-inset-left)); padding-right: max(16px, env(safe-area-inset-right)); }
+    .hub-link { top: max(12px, env(safe-area-inset-top)); left: max(12px, env(safe-area-inset-left)); }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<a class="backlink" href="index.html">← Menu główne</a>
+
+<header>
+  <h1>Barok — sprawdzian próbny</h1>
+  <p>Rozdział 3 · <em>Oblicza epok 1.2</em> · zakres zgodny z listą od nauczyciela</p>
+  <div class="meta">
+    <span>39 punktów</span>
+    <span>10 zadań</span>
+    <span>Język polski, klasa 1</span>
+  </div>
+</header>
+
+<!-- 1 -->
+<div class="task">
+  <div class="task-header"><div class="task-title">Zadanie 1.</div><div class="task-points">3 punkty</div></div>
+  <p class="task-instruction">Spośród poniższych zdań wybierz tylko te, które są <strong>prawdziwe</strong>. Kliknij zdanie, aby je zaznaczyć.</p>
+  <div id="z1">
+    <div class="stmt-row" onclick="toggleStmt(this)"><div class="checkbox-indicator"></div><div class="stmt-label">a)</div><div class="stmt-text">Nazwa epoki pochodzi prawdopodobnie od portugalskiego słowa <em>barocco</em>, oznaczającego perłę o nieregularnym kształcie.</div></div>
+    <div class="stmt-row" onclick="toggleStmt(this)"><div class="checkbox-indicator"></div><div class="stmt-label">b)</div><div class="stmt-text">Barokowy światopogląd nawiązuje przede wszystkim do renesansu i jego wiary w harmonię świata.</div></div>
+    <div class="stmt-row" onclick="toggleStmt(this)"><div class="checkbox-indicator"></div><div class="stmt-label">c)</div><div class="stmt-text">Mikołaj Sęp-Szarzyński jest uważany za prekursora baroku w literaturze polskiej.</div></div>
+    <div class="stmt-row" onclick="toggleStmt(this)"><div class="checkbox-indicator"></div><div class="stmt-label">d)</div><div class="stmt-text">Sonet składa się z czternastu wersów ułożonych w cztery strofy: 4 + 4 + 3 + 3.</div></div>
+    <div class="stmt-row" onclick="toggleStmt(this)"><div class="checkbox-indicator"></div><div class="stmt-label">e)</div><div class="stmt-text"><em>Pamiętniki</em> Jana Chryzostoma Paska zostały wydane jeszcze za życia autora i od razu przyniosły mu sławę.</div></div>
+    <div class="stmt-row" onclick="toggleStmt(this)"><div class="checkbox-indicator"></div><div class="stmt-label">f)</div><div class="stmt-text">Programem kontrreformacji były uchwały soboru watykańskiego.</div></div>
+  </div>
+  <button class="btn btn-check" onclick="checkZ1()">Sprawdź</button>
+  <div class="feedback" id="fb1"></div>
+</div>
+
+<!-- 2 -->
+<div class="task">
+  <div class="task-header"><div class="task-title">Zadanie 2.</div><div class="task-points">6 punktów</div></div>
+  <p class="task-instruction">Przyporządkuj każdemu twórcy <strong>nurt</strong>, do którego należy, oraz <strong>utwór</strong> jego autorstwa.</p>
+  <div id="z2"></div>
+  <button class="btn btn-check" onclick="checkZ2()">Sprawdź</button>
+  <div class="feedback" id="fb2"></div>
+</div>
+
+<!-- 3 -->
+<div class="task">
+  <div class="task-header"><div class="task-title">Zadanie 3.</div><div class="task-points">5 punktów</div></div>
+  <p class="task-instruction">Przyporządkuj definicję do właściwego <strong>nurtu filozoficznego</strong>.</p>
+  <div id="z3"></div>
+  <button class="btn btn-check" onclick="checkZ3()">Sprawdź</button>
+  <div class="feedback" id="fb3"></div>
+</div>
+
+<!-- 4 -->
+<div class="task">
+  <div class="task-header"><div class="task-title">Zadanie 4.</div><div class="task-points">5 punktów</div></div>
+  <p class="task-instruction">Rozpoznaj <strong>środek artystycznego wyrazu</strong> zastosowany w każdym przykładzie.</p>
+  <div id="z4"></div>
+  <button class="btn btn-check" onclick="checkZ4()">Sprawdź</button>
+  <div class="feedback" id="fb4"></div>
+</div>
+
+<!-- 5 -->
+<div class="task">
+  <div class="task-header"><div class="task-title">Zadanie 5.</div><div class="task-points">6 punktów</div></div>
+  <p class="task-instruction">Wstaw odpowiednie nazwy pojęć.</p>
+  <div class="concept-row"><span class="concept-letter">a)</span><input class="concept-input" id="c1" type="text" placeholder="pojęcie..."><span class="concept-desc">– ruch reformy wewnętrznej Kościoła katolickiego i walki z niekatolikami</span></div>
+  <div class="concept-row"><span class="concept-letter">b)</span><input class="concept-input" id="c2" type="text" placeholder="pojęcie..."><span class="concept-desc">– ideologia i styl życia szlachty polskiej, oparte na micie o pochodzeniu od starożytnego ludu</span></div>
+  <div class="concept-row"><span class="concept-letter">c)</span><input class="concept-input" id="c3" type="text" placeholder="pojęcie..."><span class="concept-desc">– motyw marności, mający źródło w biblijnej Księdze Koheleta</span></div>
+  <div class="concept-row"><span class="concept-letter">d)</span><input class="concept-input" id="c4" type="text" placeholder="pojęcie..."><span class="concept-desc">– „człowiek walczący": koncepcja człowieka toczącego bój z grzechem o zbawienie duszy</span></div>
+  <div class="concept-row"><span class="concept-letter">e)</span><input class="concept-input" id="c5" type="text" placeholder="pojęcie..."><span class="concept-desc">– niezwykły pomysł poetycki oparty na zestawieniu odległych pojęć</span></div>
+  <div class="concept-row"><span class="concept-letter">f)</span><input class="concept-input" id="c6" type="text" placeholder="pojęcie..."><span class="concept-desc">– utwór pochwalny poświęcony konkretnej osobie i ważnym dla niej wydarzeniom</span></div>
+  <button class="btn btn-check" onclick="checkZ5()">Sprawdź</button>
+  <div class="feedback" id="fb5"></div>
+</div>
+
+<!-- 6 -->
+<div class="task">
+  <div class="task-header"><div class="task-title">Zadanie 6.</div><div class="task-points">4 punkty</div></div>
+  <p class="task-instruction">Dopisz daty roczne.</p>
+  <div class="date-row"><input class="date-input" id="d1" type="text" placeholder="rok" maxlength="9"><span class="date-label">– wydanie <em>Rytmów abo Wierszy polskich</em>; data umownie otwierająca barok w Polsce</span></div>
+  <div class="date-row"><input class="date-input" id="d2" type="text" placeholder="rok" maxlength="9"><span class="date-label">– przyjęcie w Polsce uchwał soboru trydenckiego</span></div>
+  <div class="date-row"><input class="date-input" id="d3" type="text" placeholder="rok" maxlength="9"><span class="date-label">– pośmiertne wydanie <em>Myśli</em> Blaise'a Pascala</span></div>
+  <div class="date-row"><input class="date-input" id="d4" type="text" placeholder="rok" maxlength="9"><span class="date-label">– pierwsze wydanie <em>Pamiętników</em> Jana Chryzostoma Paska</span></div>
+  <button class="btn btn-check" onclick="checkZ6()">Sprawdź</button>
+  <div class="feedback" id="fb6"></div>
+</div>
+
+<!-- 7 -->
+<div class="task">
+  <div class="task-header"><div class="task-title">Zadanie 7.</div><div class="task-points">1 punkt</div></div>
+  <p class="task-instruction">Skreśl trzy cechy, które <strong>nie</strong> charakteryzują sztuki baroku. Kliknij pojęcie, żeby je skreślić.</p>
+  <div class="words-grid" id="z7words">
+    <div class="word-chip" onclick="toggleWord(this)" data-word="kontrast">kontrast i przeciwieństwo</div>
+    <div class="word-chip" onclick="toggleWord(this)" data-word="umiar">harmonia i umiar</div>
+    <div class="word-chip" onclick="toggleWord(this)" data-word="dynamizm">dynamizm i ruch</div>
+    <div class="word-chip" onclick="toggleWord(this)" data-word="prostota">prostota i oszczędność formy</div>
+    <div class="word-chip" onclick="toggleWord(this)" data-word="przepych">przepych i bogata dekoracja</div>
+    <div class="word-chip" onclick="toggleWord(this)" data-word="antropo">antropocentryzm</div>
+  </div>
+  <button class="btn btn-check" onclick="checkZ7()">Sprawdź</button>
+  <div class="feedback" id="fb7"></div>
+</div>
+
+<!-- 8 -->
+<div class="task">
+  <div class="task-header"><div class="task-title">Zadanie 8.</div><div class="task-points">3 punkty</div></div>
+  <p class="task-instruction">Opisz <strong>budowę sonetu</strong> i wyjaśnij, dlaczego Mikołaj Sęp-Szarzyński wybrał właśnie ten gatunek dla swoich refleksji.</p>
+  <textarea class="open-area" id="z8" placeholder="Wpisz odpowiedź..."></textarea>
+  <br>
+  <button class="btn btn-reveal" onclick="revealModel('m8')">Pokaż wzorcową odpowiedź</button>
+  <div class="model-answer" id="m8">
+    <strong>Wzorcowa odpowiedź:</strong><br>
+    • <strong>Budowa (1 pkt):</strong> sonet liczy <strong>14 wersów</strong> ułożonych w dwie strofy czterowersowe i dwie trzywersowe — układ <strong>4 + 4 + 3 + 3</strong>.<br>
+    • <strong>Kompozycja (1 pkt):</strong> pierwsze osiem wersów (oktawa) ma charakter <strong>opisowy</strong>, ostatnie sześć (sekstyna) — <strong>refleksyjno-filozoficzny</strong>, zakończony <strong>puentą</strong>. Między częściami następuje przełom toku myślenia.<br>
+    • <strong>Uzasadnienie (1 pkt):</strong> sonet to forma <strong>uporządkowana i kunsztowna</strong> — poeta zapisuje w niej refleksje nad sensem i celem ludzkiego istnienia. Zderzenie <strong>ładu formy z treścią pełną niepokoju i rozdarcia</strong> jest typowo barokowe.
+  </div>
+</div>
+
+<!-- 9 -->
+<div class="task">
+  <div class="task-header"><div class="task-title">Zadanie 9.</div><div class="task-points">3 punkty</div></div>
+  <p class="task-instruction">Wyjaśnij, czym był <strong>sarmatyzm</strong>, i wymień co najmniej trzy cechy charakterystyczne polskiego Sarmaty.</p>
+  <textarea class="open-area" id="z9" placeholder="Wpisz odpowiedź..."></textarea>
+  <br>
+  <button class="btn btn-reveal" onclick="revealModel('m9')">Pokaż wzorcową odpowiedź</button>
+  <div class="model-answer" id="m9">
+    <strong>Wzorcowa odpowiedź:</strong><br>
+    • <strong>Definicja (1 pkt):</strong> sarmatyzm to powszechna w baroku <strong>ideologia i styl życia szlachty polskiej</strong>, oparta na przekonaniu, że szlachta wywodzi się od starożytnych <strong>Sarmatów</strong> — walecznego ludu ceniącego wolność i demokrację. Podstawą było przekonanie o wyjątkowej roli państwa polsko-litewskiego jako ostoi „złotej wolności" i katolicyzmu oraz o misji <strong>przedmurza chrześcijaństwa</strong>.<br>
+    • <strong>Cechy Sarmaty (2 pkt za co najmniej trzy):</strong> <strong>megalomania</strong> (przeświadczenie o własnej wielkości), <strong>ksenofobia</strong> (niechęć i wrogość wobec obcych), <strong>konserwatyzm</strong> (niechęć do zmian politycznych i obyczajowych), gorliwa religijność, umiłowanie „złotej wolności", waleczność i kult rycerskości, gościnność, warcholstwo i pieniactwo, makaronizowanie, przywiązanie do tradycji i stroju (kontusz, żupan).
+  </div>
+</div>
+
+<!-- 10 -->
+<div class="task">
+  <div class="task-header"><div class="task-title">Zadanie 10.</div><div class="task-points">3 punkty</div></div>
+  <p class="task-instruction">Do którego okresu historycznoliterackiego nawiązuje <strong>barokowy światopogląd</strong>? Wymień co najmniej trzy cechy wspólne.</p>
+  <textarea class="open-area" id="z10" placeholder="Wpisz odpowiedź..."></textarea>
+  <br>
+  <button class="btn btn-reveal" onclick="revealModel('m10')">Pokaż wzorcową odpowiedź</button>
+  <div class="model-answer" id="m10">
+    <strong>Wzorcowa odpowiedź:</strong><br>
+    • <strong>Epoka (1 pkt):</strong> barokowy światopogląd nawiązuje do <strong>średniowiecza</strong> (jednocześnie odrzuca optymizm renesansu).<br>
+    • <strong>Cechy wspólne (2 pkt za co najmniej trzy):</strong> <strong>teocentryzm</strong> — Bóg w centrum świata i myślenia; motyw <strong>vanitas</strong> („marność nad marnościami" z Księgi Koheleta); <strong>memento mori</strong> — pamięć o śmierci (czaszki, klepsydry, zegary); <strong>ascetyzm i religijność</strong> (<em>homo militans</em> — walka z grzechem); <strong>dualizm duszy i ciała</strong>; życie jako <strong>pielgrzymka</strong> (<em>homo viator</em>, symbol labiryntu).
+  </div>
+</div>
+
+<div class="submit-section">
+  <button class="btn-submit" onclick="calcTotal()">Oblicz wynik końcowy</button>
+</div>
+
+<div id="scoreboard">
+  <h2>Twój wynik (zadania automatyczne)</h2>
+  <div id="score-number">–</div>
+  <div id="score-label">punktów z 30 możliwych (zad. 1–7)</div>
+  <div id="score-grade"></div>
+  <div class="score-grid" id="score-grid"></div>
+  <p style="margin-top:16px; font-size:0.85rem; opacity:0.75;">Zadania 8, 9 i 10 wymagają oceny nauczyciela (łącznie 9 pkt).</p>
+</div>
+
+</div><!-- /container -->
+
+<script>
+function norm(s) {
+  return s.trim().toLowerCase()
+    .replace(/ą/g,'a').replace(/ć/g,'c').replace(/ę/g,'e').replace(/ł/g,'l')
+    .replace(/ń/g,'n').replace(/ó/g,'o').replace(/ś/g,'s').replace(/ź/g,'z').replace(/ż/g,'z')
+    .replace(/[.,;:!?„”"']/g,'').replace(/\s+/g,' ');
+}
+
+// ===== ZADANIE 1 =====
+const z1correct = [0, 2, 3]; // a, c, d
+let z1score = null;
+
+function toggleStmt(el) {
+  if (el.dataset.locked) return;
+  el.classList.toggle('selected');
+  el.querySelector('.checkbox-indicator').textContent = el.classList.contains('selected') ? '✓' : '';
+}
+
+function checkZ1() {
+  if (z1score !== null) return;
+  const rows = document.querySelectorAll('#z1 .stmt-row');
+  let pts = 0, hasWrong = false;
+  rows.forEach((row, i) => {
+    row.dataset.locked = '1'; row.onclick = null;
+    const sel = row.classList.contains('selected');
+    const isTrue = z1correct.includes(i);
+    const ci = row.querySelector('.checkbox-indicator');
+    if (isTrue && sel) { row.classList.add('correct'); ci.textContent = '✓'; pts++; }
+    else if (!isTrue && sel) { row.classList.add('wrong'); ci.textContent = '✗'; hasWrong = true; }
+    else if (isTrue && !sel) { row.classList.add('missed'); ci.textContent = '!'; }
+  });
+  if (hasWrong) pts = 0;
+  z1score = pts;
+  const fb = document.getElementById('fb1');
+  fb.style.display = 'block';
+  fb.className = 'feedback ' + (pts >= 2 ? 'ok' : 'nok');
+  fb.textContent = `Wynik: ${pts}/3 pkt. Prawdziwe: a, c, d. (b – barok nawiązuje do średniowiecza, nie do renesansu; e – Pamiętniki wydano dopiero w 1836 r., ponad sto lat po śmierci Paska; f – chodzi o sobór trydencki, nie watykański.)`;
+}
+
+// ===== ZADANIE 2 – twórcy =====
+const Z2 = [
+  { name: 'Mikołaj Sęp-Szarzyński', hint: 'ok. 1550–1581', nurt: 'metafizyczny', utwor: 'sonet' },
+  { name: 'Daniel Naborowski',      hint: '1573–1640',     nurt: 'dworski',     utwor: 'krotkosc' },
+  { name: 'Jan Chryzostom Pasek',   hint: 'ok. 1636–1701', nurt: 'sarmacki',    utwor: 'pamietniki' }
+];
+let z2score = null;
+
+(function buildZ2() {
+  const nurty = `<option value="">— wybierz nurt —</option>
+    <option value="metafizyczny">nurt metafizyczny</option>
+    <option value="dworski">nurt dworski</option>
+    <option value="sarmacki">nurt sarmacki (ziemiański)</option>`;
+  const utwory = `<option value="">— wybierz utwór —</option>
+    <option value="sonet">Sonet IV. O wojnie naszej…</option>
+    <option value="krotkosc">Krótkość żywota</option>
+    <option value="pamietniki">Pamiętniki</option>`;
+  document.getElementById('z2').innerHTML = Z2.map((it, i) => `
+    <div class="match-row">
+      <div class="match-name">${it.name}<em>${it.hint}</em></div>
+      <select class="match-select" id="z2n${i}">${nurty}</select>
+      <select class="match-select" id="z2u${i}">${utwory}</select>
+    </div>`).join('');
+})();
+
+function checkZ2() {
+  if (z2score !== null) return;
+  let pts = 0;
+  Z2.forEach((it, i) => {
+    [['n', it.nurt], ['u', it.utwor]].forEach(([k, good]) => {
+      const sel = document.getElementById('z2' + k + i);
+      const ok = sel.value === good;
+      sel.classList.add(ok ? 'correct' : 'wrong');
+      sel.disabled = true;
+      if (ok) pts++;
+    });
+  });
+  z2score = pts;
+  const fb = document.getElementById('fb2');
+  fb.style.display = 'block';
+  fb.className = 'feedback ' + (pts >= 4 ? 'ok' : 'nok');
+  fb.textContent = `Wynik: ${pts}/6 pkt. Sęp-Szarzyński – nurt metafizyczny, Sonet IV; Naborowski – nurt dworski, Krótkość żywota; Pasek – nurt sarmacki, Pamiętniki.`;
+}
+
+// ===== ZADANIE 3 – filozofia =====
+const Z3 = [
+  { txt: 'Pogląd utożsamiający Boga z naturą i wszechświatem.', good: 'panteizm' },
+  { txt: 'Postawa wyrażająca wątpienie w powszechnie przyjęte prawdy i autorytety.', good: 'sceptycyzm' },
+  { txt: 'Pogląd, że wszystko, co istnieje, należy do natury i daje się wyjaśnić prawami przyrody.', good: 'naturalizm' },
+  { txt: 'Pogląd uznający prymat ducha (duszy) nad materią.', good: 'spirytualizm' },
+  { txt: 'Pogląd, zgodnie z którym najważniejszym narzędziem poznania jest rozum.', good: 'racjonalizm' }
+];
+let z3score = null;
+
+(function buildZ3() {
+  const opts = `<option value="">— wybierz nurt —</option>
+    <option value="panteizm">panteizm</option>
+    <option value="sceptycyzm">sceptycyzm</option>
+    <option value="naturalizm">naturalizm</option>
+    <option value="spirytualizm">spirytualizm</option>
+    <option value="racjonalizm">racjonalizm</option>`;
+  document.getElementById('z3').innerHTML = Z3.map((it, i) => `
+    <div class="match-row">
+      <div class="match-name" style="min-width:330px; font-weight:400; color:#444; font-size:0.89rem;">${it.txt}</div>
+      <select class="match-select" id="z3s${i}">${opts}</select>
+    </div>`).join('');
+})();
+
+function checkZ3() {
+  if (z3score !== null) return;
+  let pts = 0;
+  Z3.forEach((it, i) => {
+    const sel = document.getElementById('z3s' + i);
+    const ok = sel.value === it.good;
+    sel.classList.add(ok ? 'correct' : 'wrong');
+    sel.disabled = true;
+    if (ok) pts++;
+  });
+  z3score = pts;
+  const fb = document.getElementById('fb3');
+  fb.style.display = 'block';
+  fb.className = 'feedback ' + (pts >= 4 ? 'ok' : 'nok');
+  fb.textContent = `Wynik: ${pts}/5 pkt. Panteizm – Spinoza, Bruno; sceptycyzm – Montaigne; naturalizm ↔ spirytualizm to para przeciwieństw; racjonalizm – Kartezjusz.`;
+}
+
+// ===== ZADANIE 4 – środki =====
+const Z4 = [
+  { txt: '„srogi ciemności hetman" zamiast „szatan"', good: 'peryfraza' },
+  { txt: '„Pokój — szczęśliwość, ale bojowanie / Byt nasz podniebny" jako przeróbka wersetu „Bojowaniem jest żywot człowieczy na ziemi" z Księgi Hioba', good: 'parafraza' },
+  { txt: '„I nie miłować ciężko, i miłować / Nędzna pociecha"', good: 'antyteza' },
+  { txt: '„żywy trup", „ciemne światło"', good: 'oksymoron' },
+  { txt: '„Byt nasz podniebny" zamiast „nasz byt podniebny"', good: 'inwersja' }
+];
+let z4score = null;
+
+(function buildZ4() {
+  const opts = `<option value="">— wybierz środek —</option>
+    <option value="peryfraza">peryfraza</option>
+    <option value="parafraza">parafraza</option>
+    <option value="antyteza">antyteza</option>
+    <option value="oksymoron">oksymoron</option>
+    <option value="inwersja">inwersja</option>`;
+  document.getElementById('z4').innerHTML = Z4.map((it, i) => `
+    <div class="match-row">
+      <div class="match-name" style="min-width:330px; font-weight:400; color:#444; font-size:0.89rem;">${it.txt}</div>
+      <select class="match-select" id="z4s${i}">${opts}</select>
+    </div>`).join('');
+})();
+
+function checkZ4() {
+  if (z4score !== null) return;
+  let pts = 0;
+  Z4.forEach((it, i) => {
+    const sel = document.getElementById('z4s' + i);
+    const ok = sel.value === it.good;
+    sel.classList.add(ok ? 'correct' : 'wrong');
+    sel.disabled = true;
+    if (ok) pts++;
+  });
+  z4score = pts;
+  const fb = document.getElementById('fb4');
+  fb.style.display = 'block';
+  fb.className = 'feedback ' + (pts >= 4 ? 'ok' : 'nok');
+  fb.textContent = `Wynik: ${pts}/5 pkt. Pamiętaj: peryfraza to OMÓWIENIE (opis zamiast nazwy), a parafraza to PRZERÓBKA cudzego tekstu.`;
+}
+
+// ===== ZADANIE 5 – pojęcia =====
+const Z5 = [
+  { id: 'c1', accepted: ['kontrreformacja', 'reforma katolicka'] },
+  { id: 'c2', accepted: ['sarmatyzm'] },
+  { id: 'c3', accepted: ['vanitas', 'marnosc', 'motyw vanitas'] },
+  { id: 'c4', accepted: ['homo militans'] },
+  { id: 'c5', accepted: ['koncept'] },
+  { id: 'c6', accepted: ['panegiryk'] }
+];
+let z5score = null;
+
+function checkInputs(list, fbId, max, label, threshold) {
+  let pts = 0;
+  list.forEach(({ id, accepted }) => {
+    const inp = document.getElementById(id);
+    const val = norm(inp.value);
+    const ok = val !== '' && accepted.some(a => norm(a) === val);
+    inp.classList.add(ok ? 'correct' : 'wrong');
+    inp.readOnly = true;
+    if (ok) pts++;
+  });
+  const fb = document.getElementById(fbId);
+  fb.style.display = 'block';
+  fb.className = 'feedback ' + (pts >= threshold ? 'ok' : 'nok');
+  fb.textContent = `Wynik: ${pts}/${max} pkt. ${label}`;
+  return pts;
+}
+
+function checkZ5() {
+  if (z5score !== null) return;
+  z5score = checkInputs(Z5, 'fb5', 6,
+    'Klucz: a) kontrreformacja, b) sarmatyzm, c) vanitas, d) homo militans, e) koncept, f) panegiryk.', 4);
+}
+
+// ===== ZADANIE 6 – daty =====
+const Z6 = { d1: '1601', d2: '1564', d3: '1669', d4: '1836' };
+let z6score = null;
+
+function checkZ6() {
+  if (z6score !== null) return;
+  let pts = 0;
+  Object.entries(Z6).forEach(([id, good]) => {
+    const inp = document.getElementById(id);
+    const val = inp.value.replace(/[^0-9]/g, '');
+    const ok = val === good;
+    inp.classList.add(ok ? 'correct' : 'wrong');
+    inp.readOnly = true;
+    if (ok) pts++;
+  });
+  z6score = pts;
+  const fb = document.getElementById('fb6');
+  fb.style.display = 'block';
+  fb.className = 'feedback ' + (pts >= 3 ? 'ok' : 'nok');
+  fb.textContent = `Wynik: ${pts}/4 pkt. Poprawne daty: 1601, 1564, 1669, 1836.`;
+}
+
+// ===== ZADANIE 7 – skreślanie =====
+const z7wrong = ['umiar', 'prostota', 'antropo'];
+let z7score = null;
+
+function toggleWord(el) {
+  if (el.dataset.locked) return;
+  el.classList.toggle('crossed');
+}
+
+function checkZ7() {
+  if (z7score !== null) return;
+  const chips = document.querySelectorAll('#z7words .word-chip');
+  let correctCount = 0, wrongCross = false;
+  chips.forEach(chip => {
+    chip.dataset.locked = '1'; chip.onclick = null;
+    const crossed = chip.classList.contains('crossed');
+    const should = z7wrong.includes(chip.dataset.word);
+    chip.classList.remove('crossed');
+    if (crossed && should) { chip.classList.add('correct-cross'); correctCount++; }
+    else if (crossed && !should) { chip.classList.add('wrong-cross'); wrongCross = true; }
+    else if (!crossed && should) chip.classList.add('missed');
+  });
+  const pts = (!wrongCross && correctCount === 3) ? 1 : 0;
+  z7score = pts;
+  const fb = document.getElementById('fb7');
+  fb.style.display = 'block';
+  fb.className = 'feedback ' + (pts === 1 ? 'ok' : 'nok');
+  fb.textContent = `Wynik: ${pts}/1 pkt. Do skreślenia: harmonia i umiar, prostota i oszczędność formy oraz antropocentryzm — to cechy renesansu, nie baroku.`;
+}
+
+// ===== WZORCOWE ODPOWIEDZI =====
+function revealModel(id) {
+  const el = document.getElementById(id);
+  el.style.display = el.style.display === 'block' ? 'none' : 'block';
+}
+
+// ===== WYNIK KOŃCOWY =====
+function calcTotal() {
+  if (z1score === null) checkZ1();
+  if (z2score === null) checkZ2();
+  if (z3score === null) checkZ3();
+  if (z4score === null) checkZ4();
+  if (z5score === null) checkZ5();
+  if (z6score === null) checkZ6();
+  if (z7score === null) checkZ7();
+
+  const total = z1score + z2score + z3score + z4score + z5score + z6score + z7score;
+  const max = 30;
+
+  const sb = document.getElementById('scoreboard');
+  sb.style.display = 'block';
+  document.getElementById('score-number').textContent = total;
+
+  const pct = total / max;
+  let grade;
+  if (pct >= 0.9) grade = '🪶 Doskonale! Epoka opanowana.';
+  else if (pct >= 0.75) grade = '✅ Bardzo dobrze!';
+  else if (pct >= 0.6) grade = '👍 Dobrze – dopracuj słabsze zadania.';
+  else if (pct >= 0.45) grade = '📜 Dostatecznie – wróć do streszczenia.';
+  else grade = '⏳ Koniecznie powtórz cały dział!';
+  document.getElementById('score-grade').textContent = grade;
+
+  document.getElementById('score-grid').innerHTML = `
+    <div class="score-item">Zad. 1: ${z1score}/3</div>
+    <div class="score-item">Zad. 2: ${z2score}/6</div>
+    <div class="score-item">Zad. 3: ${z3score}/5</div>
+    <div class="score-item">Zad. 4: ${z4score}/5</div>
+    <div class="score-item">Zad. 5: ${z5score}/6</div>
+    <div class="score-item">Zad. 6: ${z6score}/4</div>
+    <div class="score-item">Zad. 7: ${z7score}/1</div>
+  `;
+
+  ['m8','m9','m10'].forEach(id => { document.getElementById(id).style.display = 'block'; });
+  sb.scrollIntoView({ behavior: 'smooth' });
+}
+</script>
+</body>
+</html>

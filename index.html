@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#140c07">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Barok">
+<meta name="format-detection" content="telephone=no">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-180.png">
+<title>Język polski klasa 1 · Barok</title>
+<style>
+  :root {
+    --bg: #140c07;
+    --panel: #251609;
+    --panel-2: #33200d;
+    --line: #5f3514;
+    --accent: #c85a1b;
+    --accent-light: #f3c07a;
+    --text: #f5e9d8;
+    --muted: #c2a181;
+    --good: #6aa84f;
+    --mid: #e08a3c;
+    --bad: #c0392b;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background:
+      radial-gradient(ellipse at 18% 0%, #4a2a12 0%, transparent 55%),
+      radial-gradient(ellipse at 88% 12%, #3d1f2a 0%, transparent 50%),
+      var(--bg);
+    background-attachment: fixed;
+    color: var(--text);
+    min-height: 100vh;
+    padding-bottom: 60px;
+  }
+
+  header {
+    text-align: center; padding: 46px 20px 30px;
+    border-bottom: 1px solid var(--line);
+    background: linear-gradient(180deg, rgba(255,255,255,0.03), transparent);
+  }
+  header .crest { font-size: 3.2rem; line-height: 1; margin-bottom: 10px; }
+  header h1 { font-size: clamp(1.5rem, 4vw, 2.2rem); color: var(--accent-light); letter-spacing: 3px; text-shadow: 0 0 24px rgba(200,90,27,0.35); }
+  header .sub { color: var(--muted); margin-top: 8px; font-size: 0.92rem; }
+
+  .wrap { max-width: 1020px; margin: 0 auto; padding: 0 18px; }
+
+  .overview {
+    margin-top: 28px;
+    background: linear-gradient(135deg, var(--panel), var(--panel-2));
+    border: 1px solid var(--line); border-radius: 18px; padding: 22px 24px;
+  }
+  .overview h2 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px; color: var(--muted); font-weight: 600; margin-bottom: 16px; }
+  .stats { display: flex; gap: 14px; flex-wrap: wrap; }
+  .stat { flex: 1; min-width: 140px; background: rgba(0,0,0,0.25); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
+  .stat .val { font-size: 1.7rem; font-weight: 700; color: var(--accent-light); line-height: 1.1; }
+  .stat .lbl { font-size: 0.76rem; color: var(--muted); margin-top: 4px; }
+
+  .grid { margin-top: 26px; display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); }
+
+  .card {
+    background: var(--panel); border: 1px solid var(--line);
+    border-top: 4px solid var(--c); border-radius: 18px; padding: 22px;
+    display: flex; flex-direction: column; text-decoration: none; color: inherit;
+    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+  }
+  .card:hover { transform: translateY(-3px); box-shadow: 0 14px 34px rgba(0,0,0,0.5); border-color: var(--c); }
+  .card-head { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .card-icon {
+    font-size: 1.9rem; width: 52px; height: 52px; flex: none;
+    display: grid; place-items: center; border-radius: 14px;
+    background: color-mix(in srgb, var(--c) 20%, transparent);
+    border: 1px solid color-mix(in srgb, var(--c) 45%, transparent);
+  }
+  .card h3 { font-size: 1.08rem; line-height: 1.25; }
+  .card .tag { font-size: 0.72rem; color: var(--muted); margin-top: 3px; letter-spacing: 1px; text-transform: uppercase; }
+  .card p { font-size: 0.86rem; color: var(--muted); line-height: 1.55; margin-top: 6px; }
+
+  .score-box { margin-top: 14px; }
+  .score-line { display: flex; justify-content: space-between; align-items: baseline; font-size: 0.78rem; color: var(--muted); margin-bottom: 6px; }
+  .score-line b { font-size: 0.95rem; }
+  .bar { height: 8px; border-radius: 99px; background: rgba(0,0,0,0.35); overflow: hidden; }
+  .bar span { display: block; height: 100%; border-radius: 99px; background: var(--c); width: 0; transition: width 0.8s cubic-bezier(0.2,0.8,0.2,1); }
+  .attempts { font-size: 0.72rem; color: var(--muted); margin-top: 7px; }
+
+  .topics { margin-top: 26px; background: var(--panel); border: 1px solid var(--line); border-radius: 18px; padding: 22px 24px; }
+  .topics h2 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px; color: var(--muted); margin-bottom: 6px; }
+  .topics .note { font-size: 0.78rem; color: var(--muted); margin-bottom: 14px; }
+  .chips { display: flex; gap: 8px; flex-wrap: wrap; }
+  .chip { font-size: 0.82rem; padding: 7px 14px; border-radius: 20px; background: rgba(0,0,0,0.22); border: 1px solid var(--line); color: var(--text); text-decoration: none; transition: all 0.16s; }
+  .chip:hover { border-color: var(--accent); color: var(--accent-light); }
+
+  footer { text-align: center; color: var(--muted); font-size: 0.75rem; margin-top: 32px; line-height: 1.7; }
+  footer .reset { color: var(--muted); background: none; border: 1px solid var(--line); border-radius: 20px; padding: 6px 16px; font-size: 0.72rem; cursor: pointer; margin-top: 10px; font-family: inherit; }
+  footer .reset:hover { border-color: var(--bad); color: var(--bad); }
+
+  /* ——— iPad / Safari ——— */
+  html { -webkit-text-size-adjust: 100%; }
+  * { -webkit-tap-highlight-color: rgba(0,0,0,0); }
+  a, button, select, summary,
+  .stmt-row, .word-chip, .chron-row, .match-select,
+  .card, .mode-card, .answer-btn, .tf-btn, .card-scene, .chip, .alpha button
+  { touch-action: manipulation; }
+  /* Safari na iOS powiększa stronę, gdy pole ma czcionkę < 16px */
+  input, select, textarea { font-size: 16px; }
+  /* efekty hover tylko tam, gdzie kursor faktycznie istnieje */
+  @media (hover: none) {
+    .card:hover, .mode-card:hover, .dept:hover { transform: none; box-shadow: none; }
+  }
+  @supports (padding: max(0px)) {
+    body { padding-left: max(16px, env(safe-area-inset-left)); padding-right: max(16px, env(safe-area-inset-right)); }
+    .hub-link { top: max(12px, env(safe-area-inset-top)); left: max(12px, env(safe-area-inset-left)); }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="crest">🪶</div>
+  <h1>BAROK</h1>
+  <div class="sub">Rozdział 3 · <em>Oblicza epok 1.2</em>, WSiP · materiały do sprawdzianu</div>
+</header>
+
+<div class="wrap">
+
+  <section class="overview">
+    <h2>Twój postęp</h2>
+    <div class="stats">
+      <div class="stat"><div class="val" id="s-played">0</div><div class="lbl">rozegranych gier</div></div>
+      <div class="stat"><div class="val" id="s-best">—</div><div class="lbl">rekord w quizie</div></div>
+      <div class="stat"><div class="val" id="s-last">—</div><div class="lbl">ostatnia próba</div></div>
+      <div class="stat"><div class="val" id="s-hint">Zacznij</div><div class="lbl">sugerowany krok</div></div>
+    </div>
+  </section>
+
+  <section class="grid">
+    <a class="card" style="--c:#c85a1b" href="streszczenie_barok.html">
+      <div class="card-head">
+        <div class="card-icon">📖</div>
+        <div><h3>Streszczenie działu</h3><div class="tag">powtórka · 15 rozdziałów</div></div>
+      </div>
+      <p>Ułożone dokładnie według listy od nauczyciela — od ram czasowych i nazwy epoki po środki artystyczne. Zacznij tutaj.</p>
+    </a>
+
+    <a class="card" style="--c:#6aa84f" href="barok_quest.html">
+      <div class="card-head">
+        <div class="card-icon">🎮</div>
+        <div><h3>Barok Quest</h3><div class="tag">gra · 59 fiszek + quiz</div></div>
+      </div>
+      <p>Fiszki z pojęciami i quiz: 20 pytań, 3 życia, timer 15 sekund. Punkty rosną za serie poprawnych odpowiedzi.</p>
+      <div class="score-box" id="quest-score"></div>
+    </a>
+
+    <a class="card" style="--c:#e08a3c" href="sprawdzian_barok.html">
+      <div class="card-head">
+        <div class="card-icon">📝</div>
+        <div><h3>Sprawdzian próbny</h3><div class="tag">10 zadań · 39 punktów</div></div>
+      </div>
+      <p>Przyporządkowania twórców do nurtów, rozpoznawanie środków stylistycznych, daty i pytania otwarte. 30 punktów liczy się samo.</p>
+    </a>
+
+    <a class="card" style="--c:#a1887f" href="slownik_barok.html">
+      <div class="card-head">
+        <div class="card-icon">📚</div>
+        <div><h3>Słownik pojęć</h3><div class="tag">53 hasła · wyszukiwarka</div></div>
+      </div>
+      <p>Wszystkie pojęcia, twórcy i utwory z działu. Szukaj po nazwie lub po treści definicji — działa też bez polskich znaków.</p>
+    </a>
+  </section>
+
+  <section class="topics">
+    <h2>Lista od nauczyciela</h2>
+    <div class="note">Kliknij zagadnienie, żeby przejść do odpowiedniego fragmentu streszczenia.</div>
+    <div class="chips">
+      <a class="chip" href="streszczenie_barok.html#s1">ramy czasowe, nazwa, cechy</a>
+      <a class="chip" href="streszczenie_barok.html#s2">kontrreformacja</a>
+      <a class="chip" href="streszczenie_barok.html#s3">nawiązanie do średniowiecza</a>
+      <a class="chip" href="streszczenie_barok.html#s4">filozofia i przedstawiciele</a>
+      <a class="chip" href="streszczenie_barok.html#s5">panteizm · sceptycyzm · naturalizm · spirytualizm</a>
+      <a class="chip" href="streszczenie_barok.html#s6">motywy kultury i sztuki</a>
+      <a class="chip" href="streszczenie_barok.html#s7">architektura i sztuka</a>
+      <a class="chip" href="streszczenie_barok.html#s8">podział literatury polskiej</a>
+      <a class="chip" href="streszczenie_barok.html#s9">Sęp-Szarzyński</a>
+      <a class="chip" href="streszczenie_barok.html#s10">budowa sonetu</a>
+      <a class="chip" href="streszczenie_barok.html#s11">motywy nurtu metafizycznego</a>
+      <a class="chip" href="streszczenie_barok.html#s12">Naborowski</a>
+      <a class="chip" href="streszczenie_barok.html#s13">sarmatyzm i cechy Sarmaty</a>
+      <a class="chip" href="streszczenie_barok.html#s14">Pasek</a>
+      <a class="chip" href="streszczenie_barok.html#s15">peryfraza · parafraza · antyteza · oksymoron · inwersja</a>
+    </div>
+  </section>
+
+  <footer>
+    Wyniki quizu zapisują się lokalnie w tej przeglądarce. Otwieraj materiały w tej samej przeglądarce, żeby postęp się zgadzał.
+    <br>
+    <button class="reset" onclick="resetAll()">Wyczyść wyniki quizu</button>
+  </footer>
+
+</div>
+
+<script>
+const KEY = 'barok_quest_scores';
+
+function loadScores() {
+  try { const v = JSON.parse(localStorage.getItem(KEY) || '[]'); return Array.isArray(v) ? v : []; }
+  catch (e) { return []; }
+}
+
+function pctColor(p) {
+  if (p >= 80) return 'var(--good)';
+  if (p >= 55) return 'var(--mid)';
+  return 'var(--bad)';
+}
+
+function render() {
+  const scores = loadScores();
+  const last = scores[0] || null;
+  let best = null;
+  scores.forEach(s => {
+    if (!s || !s.total) return;
+    const p = Math.round((s.correct / s.total) * 100);
+    if (best === null || p > best) best = p;
+  });
+
+  document.getElementById('s-played').textContent = scores.length;
+  document.getElementById('s-best').textContent = best === null ? '—' : best + '%';
+  document.getElementById('s-best').style.color = best === null ? '' : pctColor(best);
+  document.getElementById('s-last').textContent = last ? `${last.correct}/${last.total}` : '—';
+
+  const hint = document.getElementById('s-hint');
+  if (best === null) hint.textContent = 'Fiszki';
+  else if (best < 60) hint.textContent = 'Streszczenie';
+  else if (best < 85) hint.textContent = 'Quiz';
+  else hint.textContent = 'Sprawdzian';
+  hint.style.fontSize = '1.25rem';
+
+  const box = document.getElementById('quest-score');
+  box.innerHTML = best === null
+    ? `<div class="score-line"><span>Jeszcze nie grane</span><b style="color:var(--muted)">—</b></div>
+       <div class="bar"><span style="width:0"></span></div>
+       <div class="attempts">Zagraj pierwszy raz, żeby zobaczyć tu swój wynik.</div>`
+    : `<div class="score-line"><span>Rekord</span><b style="color:${pctColor(best)}">${best}%</b></div>
+       <div class="bar"><span data-w="${best}"></span></div>
+       <div class="attempts">Podejść: ${scores.length}${last ? ` · ostatnio: ${last.correct}/${last.total} (${last.date || '—'})` : ''}</div>`;
+
+  requestAnimationFrame(() => {
+    document.querySelectorAll('.bar span[data-w]').forEach(s => { s.style.width = s.dataset.w + '%'; });
+  });
+}
+
+function resetAll() {
+  if (!confirm('Na pewno usunąć wszystkie zapisane wyniki quizu?')) return;
+  localStorage.removeItem(KEY);
+  render();
+}
+
+render();
+window.addEventListener('focus', render);
+</script>
+
+</body>
+</html>
